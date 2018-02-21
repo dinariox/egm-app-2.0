@@ -1,0 +1,62 @@
+
+@font-face {
+
+    font-family: 'Indie Flower';
+    src: url('./../IndieFlower.ttf');
+
+}
+
+@font-face {
+
+    font-family: 'Neucha';
+    src: url('./../Neucha.ttf');
+
+}
+
+.welcomeCard {
+
+    margin-bottom: 12px;
+    min-height: 75px;
+
+}
+
+.welcomeMessage {
+
+    font-weight: 400 !important;
+    text-align: center;
+    opacity: 0;
+
+}
+
+.welcomeInfo {
+
+    text-align: center;
+    font-size: 0.9em !important;
+    margin-top: 4px;
+    opacity: 0;
+
+}
+
+.welcomeLoadingCircle {
+
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+
+}
+
+@keyframes fade-in {
+
+    0% { opacity: 0; }
+
+    100% { opacity: 1; }
+
+}
+
+@keyframes fade-out {
+
+    0% { opacity: 1; }
+
+    100% { opacity: 0; }
+
+}

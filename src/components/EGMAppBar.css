@@ -1,0 +1,90 @@
+.list {
+    width: 320px; /* Breite des Menüs */
+}
+
+.root {
+    width: 100%;
+}
+
+.flex {
+    flex: 1;
+}
+
+.menuButton {
+    margin-left: -12px !important;
+    margin-right: 20px;
+}
+
+.notificationButton {
+    margin-right: -12px !important;
+}
+
+.EGMLogo {
+    width: 36px;
+    height: 36px;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    box-shadow: #555 5px;
+}
+
+.iconButtonsWrapper {
+    margin-top: -12px;
+    margin-left: auto; /* Align right for some reason */
+    margin-right: -12px;
+}
+
+.card {
+    min-width: 275px;
+    background-image: url('./../img/polyMenuBackground.jpg');
+    background-size: cover;
+}
+
+.title {
+    margin-bottom: 16px;
+    font-size: 14px;
+    color: #fff;
+}
+
+.avatar {
+    margin: 0;
+}
+
+.name {
+    color: #fff;
+    margin: 0;
+    margin-bottom: 4px;
+    font-weight: 500;
+}
+
+.stufe {
+    color: #eee;
+    margin: 0;
+    font-weight: 300;
+}
+
+.userInfoWrapper {
+    padding-top: 8px;
+    display: flex;
+}
+
+.wrapper {
+    height: 48px;
+    width: 100%;
+    display: flex;
+    margin-left: 8px;
+    padding-left: 8px !important;
+}
+
+.text {
+    margin-top: -4px;
+    margin-left: 0 !important;
+    text-transform: none !important;
+    font-size: 1.22em !important;
+    text-align: left !important;
+}
+
+.icon {
+    margin-left: auto;
+    margin-right: -12px;
+}

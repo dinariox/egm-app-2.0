@@ -1,0 +1,242 @@
+import React, { Component } from "react";
+import {
+    Route,
+    HashRouter
+} from "react-router-dom";
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Reset from "./pages/PasswordReset";
+import Plan from "./pages/Plan";
+import Kalender from "./pages/Kalender";
+import News from "./pages/archiv/News";
+import SV from "./pages/archiv/SV";
+import Schulleitung from "./pages/archiv/Schulleitung";
+import OpenArticle from "./pages/archiv/OpenArticle";
+import Stufenbrett from "./pages/stufenbrett/Stufenbrett";
+import OpenStufenbrett from "./pages/stufenbrett/OpenStufenbrett";
+
+import { CircularProgress } from 'material-ui/Progress';
+
+import firebase from './firebase';
+const messaging = firebase.messaging();
+const db = firebase.database();
+const auth = firebase.auth();
+
+class App extends Component {
+
+    constructor() {
+
+        super();
+
+        this.state = {
+
+            loggedin: undefined,
+            mode: 'login',
+            loggedinUser: null
+
+        }
+
+    }
+
+
+    changeMode(newMode) {
+
+        this.setState({
+            mode: newMode
+        });
+
+    }
+
+
+    componentWillMount() {
+
+        this.initiateFirebaseMessaging();
+
+        auth.onAuthStateChanged(user => {
+
+            if (user) {
+
+                if (this.state.mode === 'register') {
+
+                    db.ref('/users/').push({
+                        uid: user.uid,
+                        email: user.email,
+                        firstname: this.state.firstname,
+                        lastname: this.state.lastname
+                    }).then(() => {
+                      
+                        this.setState({
+
+                            loggedin: true,
+                            loggedinUser: user
+
+                        });
+                        
+                    });
+
+                } else {
+
+                    this.setState({
+
+                        loggedin: true,
+                        loggedinUser: user
+
+                    });
+
+                }
+
+            } else {
+
+                this.setState({
+
+                    loggedin: false,
+                    loggedinUser: null
+
+                })
+
+            }
+
+        })
+
+    }
+
+
+    initiateFirebaseMessaging() {
+
+        // Wenn der Browser keine Benachrichtigungen unterstützt, hat er auch keine
+        // Funktion namens 'Notification'.
+        // Hier wird geprüft, ob diese Funktion existiert. Wenn nicht, wird returned,
+        // um Crashes wegen fehlenden Funktionen zu verhindern.
+        // undefined = existiert nichtö
+
+        if (typeof Notification === "undefined") {
+
+            return console.warn('Browser does not support Notifications');
+
+        }
+
+        messaging.requestPermission()
+            .then(() => {
+                console.log('Notification permission granted.');
+                return messaging.getToken();
+            })
+            .then(token => {
+
+                db.ref('/tokens').orderByChild('token').equalTo(token).once('value', snapshot => {
+
+                    if (snapshot.exists()) {
+                        console.log('Token is already in the database');
+                        return;
+                    }
+
+                    db.ref('/tokens').push({
+
+                        token: token
+
+                    }).then(() => {
+                        console.log('Token uploaded to database', token);
+                    }).catch((error) => {
+                        console.error('Token upload failed', error);
+                    });
+
+                });
+
+
+            })
+            .catch(err => {
+                console.log('FCM Error:', err);
+            });
+
+
+        messaging.onTokenRefresh(() => {
+
+            messaging.getToken().then((token) => {
+
+                console.info("Token has been refreshed");
+
+                db.ref('/tokens').orderByChild('token').equalTo(token).once('value', snapshot => {
+
+                    if (snapshot.exists()) {
+                        console.log('Token is already in the database');
+                        return;
+                    }
+
+                    db.ref('/tokens').push({
+
+                        token: token
+
+                    }).then(() => {
+                        console.log('Token uploaded to database', token);
+                    }).catch((error) => {
+                        console.error('Token upload failed', error);
+                    });
+
+                });
+
+            });
+
+        });
+
+    }
+
+
+    render() {
+
+        return (
+            <HashRouter>
+
+                { this.state.loggedin ?
+
+                    <div>
+
+                        <Route path="/" exact component={Home} loggedinUser={this.state.loggedinUser} />
+                        <Route path="/plan" component={Plan} />
+                        <Route path="/kalender" component={Kalender} />
+                        <Route path="/archiv/news" exact component={News} />
+                        <Route path="/archiv/sv" exact component={SV} />
+                        <Route path="/archiv/schulleitung" exact component={Schulleitung} />
+                        <Route path="/archiv/open/:mode/:articleID/:rth" exact component={OpenArticle} />
+                        <Route path="/stufenbrett" exact component={Stufenbrett} />
+                        <Route path="/stufenbrett/open/:articleID" exact component={OpenStufenbrett} />
+
+                    </div>
+
+                :
+
+                    this.state.loggedin === undefined ?
+                        
+                        <CircularProgress style={{ position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%)' }} />
+
+                    :
+
+                        <div>
+
+                            { this.state.mode === 'register' ?
+
+                                <Register changeMode={newMode => this.changeMode(newMode)} handlePostRegister={(firstname, lastname) => this.setState({ firstname: firstname, lastname: lastname })} />
+
+                            :
+
+                                this.state.mode === 'reset' ?
+
+                                    <Reset changeMode={newMode => this.changeMode(newMode)} />
+
+                                :
+
+                                    <Login changeMode={newMode => this.changeMode(newMode)} />
+
+                            }
+
+                        </div>
+
+                }
+
+            </HashRouter>
+        );
+
+    }
+
+}
+
+export default App;

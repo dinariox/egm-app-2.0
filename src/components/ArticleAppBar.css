@@ -1,0 +1,14 @@
+
+.root {
+    width: 100%;
+}
+
+.flex {
+    flex: 1;
+}
+
+.closeButton {
+
+    margin-right: -12px !important;
+
+}

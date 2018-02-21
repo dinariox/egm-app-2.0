@@ -1,0 +1,54 @@
+
+.articlesCard {
+
+    margin-bottom: 12px;
+
+}
+
+@media only screen and (min-width: 1200px) {
+
+    .articlesCard {
+
+        flex: 1;
+
+    }
+
+}
+
+.articleContent {
+
+    padding-bottom: 0 !important;
+
+}
+
+.articleList {
+    
+    padding-bottom: 0 !important;
+    animation: fade-in 0.5s forwards;
+
+}
+
+.arrowIcon {
+
+    width: 20px !important;
+    height: 20px !important;
+    margin-top: -1.2px;
+
+}
+
+.articlesLoadingCircle {
+
+    position: absolute;
+    left: 50%;
+    margin-top: 50px;
+    transform: translateX(-50%) translateY(-50%);
+
+}
+
+.articlesListWrapper {
+
+    min-height: 100px;
+    position: relative;
+
+}
+

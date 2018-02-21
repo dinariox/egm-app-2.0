@@ -1,0 +1,72 @@
+
+.appBarSpacer {
+
+    height: 56px;
+
+}
+
+.bottomNavigationSpacer {
+
+    height: 56px;
+
+}
+
+@media only screen and (min-width: 1200px) {
+
+    .articleCardsWrapper {
+
+        display: flex;
+
+    }
+
+    .calenderList {
+
+        max-height: calc(100vh - 64px);
+
+    }
+
+}
+
+@media only screen and (min-width: 1200px) {
+
+    .articleCardsWrapper {
+
+        display: flex;
+
+    }
+
+}
+
+
+.calenderList {
+
+    width: 100%;
+    position: relative !important;
+    overflow: auto !important;
+    max-height: calc(100vh - 56px);
+
+}
+
+.calenderListItem {
+
+    background-color: white;
+
+}
+
+.dateAvatar {
+
+    border-style: solid;
+    border-width: 2px;
+    background-color: transparent !important;
+    color: #333 !important;
+
+}
+
+.monthSubheader {
+
+    text-align: center !important;
+    font-size: 1em !important;
+    background-color: #eee !important;
+    color: #333 !important;
+
+}

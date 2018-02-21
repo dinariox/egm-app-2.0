@@ -1,0 +1,33 @@
+
+.rootImage {
+
+    height: 230px;
+    background-image: url('./../img/schoolRendering.jpg');
+    background-size: cover;
+
+}
+
+.dateDisplay {
+
+    color: white !important;
+    padding-top: 194px;
+    margin-left: 16px !important;
+    font-weight: 400 !important;
+
+}
+
+@media only screen and (min-width: 1200px) {
+
+    .rootImage {
+
+        height: 330px;
+
+    }
+
+    .dateDisplay {
+
+        padding-top: 290px;
+
+    }
+
+}
