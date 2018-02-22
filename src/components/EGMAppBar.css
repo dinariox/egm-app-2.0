@@ -34,12 +34,6 @@
     margin-right: -12px;
 }
 
-.card {
-    min-width: 275px;
-    background-image: url('./../img/polyMenuBackground.jpg');
-    background-size: cover;
-}
-
 .title {
     margin-bottom: 16px;
     font-size: 14px;

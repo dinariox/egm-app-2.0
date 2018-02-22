@@ -85,7 +85,7 @@ class Home extends Component {
 
         db.ref('/users/').orderByChild('uid').equalTo(auth.currentUser.uid).once('value').then((snapshot) => {
 
-            snapshot.forEach(val => { return console.log(val.val()) });
+            snapshot.forEach(val => { return val.val() });
 
         })
 

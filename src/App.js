@@ -15,6 +15,7 @@ import Schulleitung from "./pages/archiv/Schulleitung";
 import OpenArticle from "./pages/archiv/OpenArticle";
 import Stufenbrett from "./pages/stufenbrett/Stufenbrett";
 import OpenStufenbrett from "./pages/stufenbrett/OpenStufenbrett";
+import Sharens from "./pages/Sharens";
 
 import { CircularProgress } from 'material-ui/Progress';
 
@@ -199,6 +200,7 @@ class App extends Component {
                         <Route path="/archiv/open/:mode/:articleID/:rth" exact component={OpenArticle} />
                         <Route path="/stufenbrett" exact component={Stufenbrett} />
                         <Route path="/stufenbrett/open/:articleID" exact component={OpenStufenbrett} />
+                        <Route path="/sharens" component={Sharens} />
 
                     </div>
 

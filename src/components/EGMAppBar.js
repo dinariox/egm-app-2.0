@@ -30,6 +30,7 @@ import NotificationsIcon from 'material-ui-icons/Notifications';
 // import NotificationsActiveIcon from 'material-ui-icons/NotificationsActive';
 
 import personImg from './../img/person.jpg';
+import cardImage from './../img/polyMenuBackground.jpg';
 
 // Firebase References
 import firebase from './../firebase';
@@ -53,13 +54,13 @@ class EGMAppBar extends Component {
 
         if (this.props.imageMode) {
 
-            this.state = {backgroundColor: 'transparent', shadow: 'none', transition: 'background-color 200ms, box-shadow 200ms', transparent: true};
+            this.state = { background: 'linear-gradient(to bottom, rgba(0,0,0,0.15) 0%,rgba(0,0,0,0.15) 15%,rgba(0,0,0,0) 100%)', shadow: 'none', transition: 'background 200ms, box-shadow 200ms', transparent: true};
 
             this.checkScroll = this.checkScroll.bind(this);
 
         } else {
 
-            this.state = {backgroundColor: primaryColor, shadow: ''};
+            this.state = {background: primaryColor, shadow: ''};
 
         }
 
@@ -68,9 +69,9 @@ class EGMAppBar extends Component {
     checkScroll() {
 
         if (window.scrollY >= scrollDistanceUntilSolidAppbar) {
-            this.setState({backgroundColor: primaryColor, shadow: '', transparent: false});
+            this.setState({background: primaryColor, shadow: '', transparent: false});
         } else {
-            this.setState({backgroundColor: 'transparent', shadow: 'none', transparent: true});
+            this.setState({ background: 'linear-gradient(to bottom, rgba(0,0,0,0.15) 0%,rgba(0,0,0,0.15) 15%,rgba(0,0,0,0) 100%)', shadow: 'none', transparent: true});
         }
 
     }
@@ -95,7 +96,7 @@ class EGMAppBar extends Component {
 
         return (
             <div className="root">
-                <AppBar position="fixed" style={{backgroundColor: this.state.backgroundColor, boxShadow: this.state.shadow, transition: this.state.transition}}>
+                <AppBar position="fixed" style={{background: this.state.background, boxShadow: this.state.shadow, transition: this.state.transition}}>
                     <Toolbar>
                         <MenuDrawerLeft />
                         <Typography variant="title" color="inherit" className="flex" style={this.state.transparent ? { opacity: 0, transition: 'opacity 200ms' } : { opacity: 1, transition: 'opacity 200ms'} }>
@@ -114,13 +115,24 @@ class EGMAppBar extends Component {
 }
 
 
+const cardStyle = {
+    minWidth: '275px',
+    backgroundImage: cardImage,
+    backgroundSize: 'cover'
+}
+
+
 class ProfileDisplay extends Component {
 
     render() {
 
         return (
             <div>
-                <Card className="card">
+                <Card style={{
+                    minWidth: '275px',
+                    backgroundImage: 'url(' + cardImage + ')',
+                    backgroundSize: 'cover',
+                    backgroundColor: '#abc'}}>
                     <CardContent>
                         <div style={{display: 'flex', width: '100%'}}>
                             <Typography variant="title" style={{color: '#fff'}}>EGM App</Typography>
@@ -250,7 +262,7 @@ class MenuDrawerLeft extends Component {
                     </ListItemIcon>
                     <ListItemText primary="Stufenbrett" />
                 </ListItem>
-                <ListItem button>
+                <ListItem button component={Link} to="/sharens">
                     <ListItemIcon>
                         <SharensIcon />
                     </ListItemIcon>
