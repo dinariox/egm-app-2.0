@@ -334,10 +334,13 @@ class Plan extends Component {
                                     <CircularProgress className="vertretungenLoadingCircle" />
 
                                 }
-
-                                <Typography variant="caption" style={{ textAlign: 'center', paddingTop: 16 }}>
-                                    {this.state.nDayVertretungenReady ? `Aktuellste Version vom ${this.state.nDayUpdatedDate.day}.${this.state.nDayUpdatedDate.month}.${this.state.nDayUpdatedDate.year} um ${this.state.nDayUpdatedDate.time} Uhr` : ''}
-                                </Typography>
+                                {this.state.nDayVertretungenReady ? 
+                                    <Typography variant="caption" style={{ textAlign: 'center', paddingTop: 16 }}>
+                                        
+                                        <CheckIcon style={{ width: 16, position: 'relative', top: '6px' }} />Aktuellste Version vom {this.state.nDayUpdatedDate.day}.{this.state.nDayUpdatedDate.month}.{this.state.nDayUpdatedDate.year} um {this.state.nDayUpdatedDate.time} Uhr
+                                        
+                                    </Typography>
+                                : null}
 
 
                             </CardContent>
