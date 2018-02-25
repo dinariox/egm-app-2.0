@@ -60,3 +60,4 @@ typings/
 # own additions
 .vscode
 functions/node_modules
+build/

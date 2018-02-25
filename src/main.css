@@ -1,4 +1,4 @@
-
+    
 .appBarSpacer {
 
     height: 56px;
@@ -68,5 +68,23 @@
     font-size: 1em !important;
     background-color: #eee !important;
     color: #333 !important;
+
+}
+
+.abwesendeLehrerLoadingCircle {
+
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #EF5350 !important;
+
+}
+
+.vertretungenLoadingCircle {
+
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #4CAF50 !important;
 
 }

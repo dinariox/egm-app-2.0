@@ -110,9 +110,9 @@ class Home extends Component {
                 
                     <ArticlesCard className="articleCardsChild" heading="Aktuelles" mode="news" rth={true} loadColor="#4CAF50" history={this.props.history} />
 
-                        <ArticlesCard className="articleCardsChild" heading="Neuigkeiten der SV" mode="sv" rth={true} loadColor="#FFB300" history={this.props.history} />
+                    <ArticlesCard className="articleCardsChild" heading="Neuigkeiten der SV" mode="sv" rth={true} loadColor="#FFB300" history={this.props.history} />
 
-                        <ArticlesCard className="articleCardsChild" heading="Mitteilungen der Schulleitung" mode="schulleitung" rth={true} loadColor="#EF5350" history={this.props.history} />
+                    <ArticlesCard className="articleCardsChild" heading="Mitteilungen der Schulleitung" mode="schulleitung" rth={true} loadColor="#EF5350" history={this.props.history} />
 
                 </div>
 
