@@ -64,7 +64,8 @@ class App extends Component {
                         uid: user.uid,
                         email: user.email,
                         firstname: this.state.firstname,
-                        lastname: this.state.lastname
+                        lastname: this.state.lastname,
+                        stufe: this.state.userWillBeStufe || ''
                     }).then(() => {
                       
                         this.setState({
@@ -212,25 +213,7 @@ class App extends Component {
 
                     :
 
-                        <div>
-
-                            { this.state.mode === 'register' ?
-
-                                <Register changeMode={newMode => this.changeMode(newMode)} handlePostRegister={(firstname, lastname) => this.setState({ firstname: firstname, lastname: lastname })} />
-
-                            :
-
-                                this.state.mode === 'reset' ?
-
-                                    <Reset changeMode={newMode => this.changeMode(newMode)} />
-
-                                :
-
-                                    <Login changeMode={newMode => this.changeMode(newMode)} />
-
-                            }
-
-                        </div>
+                        <Login handlePostRegister={(firstname, lastname, userWillBeStufe) => this.setState({ firstname: firstname, lastname: lastname, userWillBeStufe: userWillBeStufe })} />
 
                 }
 

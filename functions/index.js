@@ -127,12 +127,6 @@ exports.onFileUpload = functions.https.onRequest((req, res) => {
 
         busboy.on("file", (fieldname, file, filename, encoding, mimetype) => {
 
-            if (filename.split('.').pop() !== 'xml') {
-                return res.status(400).json({
-                    message: 'Received file with unsupported MIME type ' + mimetype + ' - expected application/xml'
-                });
-            }
-
             console.log('Receiving file with name', filename);
 
             let xmlString = '';
@@ -301,5 +295,21 @@ exports.onFileUpload = functions.https.onRequest((req, res) => {
 
     }
 
+
+});
+
+
+exports.validateStufenpasswort = functions.https.onRequest((req, res) => {
+
+    cors(req, res, () => {
+
+        console.log(req.get('stufenpasswort'));
+
+        res.set({
+            'Access-Control-Allow-Credentials': true
+        });
+        return res.status(200).send(req.get('stufenpasswort'));
+
+    });
 
 });

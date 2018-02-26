@@ -130,23 +130,22 @@ class PasswordReset extends Component {
 
                     <div className="loginWrapper">
 
-                        <Paper className="textFieldPaper" >
-                            <img src={logo} className="logo" />
-                            <br />
+                        <img src={logo} className="logo" />
+                        <br />
 
-                            <TextField
-                                error={this.state.errorEmail}
-                                id="userResetEmail"
-                                label="Email"
-                                type="email"
-                                className="textField"
-                                value={this.state.userResetEmail}
-                                onChange={this.handleTextChance('userResetEmail')}
-                                margin="normal"
-                            />
-                            <br />
-                            <br />
-                        </Paper>
+                        <TextField
+                            error={this.state.errorEmail}
+                            id="userResetEmail"
+                            label="Email"
+                            type="email"
+                            className="textField"
+                            value={this.state.userResetEmail}
+                            onChange={this.handleTextChance('userResetEmail')}
+                            margin="normal"
+                        />
+                        <br />
+                        <br />
+
                         <Typography className="loginErrorMessage">
                             {this.state.errorMessage}
                         </Typography>
