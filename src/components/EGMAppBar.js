@@ -161,15 +161,23 @@ class CurrentAccountDisplay extends Component {
 
         super();
 
-        this.state = {userInfo: {firstname: '', lastname: ''}};
+        this.state = {userFirstname: 'Lädt...', userLastname: '', userStufe: ''};
 
     }
 
-    componentWillMount() {
+    componentDidMount() {
 
         db.ref('/users/').orderByChild('uid').equalTo(auth.currentUser.uid).once('value').then((snapshot) => {
 
-            snapshot.forEach(val => { return this.setState({ userInfo: val.val() })});
+            let data = snapshot.val();
+
+            console.log(data);
+            let userInfo = data[Object.keys(data)[0]]
+            this.setState({ userFirstname: userInfo.firstname, userLastname: userInfo.lastname, userStufe: userInfo.stufe });
+
+        }).catch(err => {
+
+            console.log('Error loading user data in CurrentAccountDisplay:', err);
 
         });
 
@@ -193,8 +201,8 @@ class CurrentAccountDisplay extends Component {
 
             <Button className="wrapper" onClick={() => {this.handleLogout()}}>
                 <div className="text">
-                    <p className="name">{this.state.userInfo.firstname + ' ' + this.state.userInfo.lastname}</p>
-                    <p className="stufe">Schüler/in <b>·</b> Stufe 11</p>
+                    <p className="name">{this.state.userFirstname + ' ' + this.state.userLastname}</p>
+                    <p className="stufe">{this.state.userStufe === 'lehrer' ? <span>Lehrer/in des EGM</span> : <span>Schüler/in <b>·</b> Stufe: {this.state.userStufe}</span> }</p>
                 </div>
                 <div className="icon">
                     <ExpandIcon color="secondary" />

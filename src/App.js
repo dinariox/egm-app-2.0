@@ -213,7 +213,7 @@ class App extends Component {
 
                     :
 
-                        <Login handlePostRegister={(firstname, lastname, userWillBeStufe) => this.setState({ firstname: firstname, lastname: lastname, userWillBeStufe: userWillBeStufe })} />
+                        <Login handlePostRegister={(firstname, lastname, userWillBeStufe) => this.setState({ firstname: firstname, lastname: lastname, userWillBeStufe: userWillBeStufe, mode: 'register' })} />
 
                 }
 

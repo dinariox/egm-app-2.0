@@ -8,6 +8,7 @@ import './WelcomeCard.css';
 
 import firebase from './../firebase';
 const db = firebase.database();
+const auth = firebase.auth();
 
 let intervalWelcome;
 let timeoutWelcome;
@@ -32,48 +33,48 @@ class WelcomeCard extends Component {
 
     componentDidMount() {
 
-        db.ref('willkommenstexte').once('value', snapshot => {
+        db.ref('users').orderByChild('uid').equalTo(auth.currentUser.uid).once('value').then(snapshot => {
 
-            let messages = snapshot.val();
-            let sortedMessages = [];
+            let data = snapshot.val();
 
-            // Texte werden in neues Array sortiert, da die Firebase bei 1 anfängt, nicht 0
-            messages.forEach(element => {
+            console.log(data);
+            var userInfo = data[Object.keys(data)[0]]
 
-                sortedMessages.push(element);
 
-            });
+            db.ref('willkommenstexte').once('value', snapshot => {
 
-            let amountOfMessages = sortedMessages.length;
+                console.log(userInfo.firstname)
 
-            let randomNumber = Math.floor(Math.random() * amountOfMessages);
-            let randomMessage = sortedMessages[randomNumber];
+                let messages = snapshot.val();
+                let sortedMessages = [];
 
-            let messageText = randomMessage.text;
-            let replacedMessage = messageText.replace('[NAME]', this.state.userfirstname);
+                // Texte werden in neues Array sortiert, da die Firebase bei 1 anfängt, nicht 0
+                messages.forEach(element => {
 
-            this.setState({
-                message: replacedMessage,
-                author: randomMessage.autor,
-                language: randomMessage.sprache,
-                animation: 'fade-in 0.5s forwards',
-                loadingCircle: 'fade-out 0.2s forwards',
-                font: randomMessage.sprache === 'Russisch' ? 'Neucha' : 'Indie Flower'
-            });
+                    sortedMessages.push(element);
 
-            
-
-            timeoutWelcome = setTimeout(function () {
-
-                this.setState({
-                    animation: 'fade-out 0.5s forwards'
                 });
 
-            }.bind(this), 9500);
+                let amountOfMessages = sortedMessages.length;
 
-            intervalWelcome = setInterval(function () {
+                let randomNumber = Math.floor(Math.random() * amountOfMessages);
+                let randomMessage = sortedMessages[randomNumber];
 
-                setTimeout(function () {
+                let messageText = randomMessage.text;
+                let replacedMessage = messageText.replace('[NAME]', userInfo.firstname);
+
+                this.setState({
+                    message: replacedMessage,
+                    author: randomMessage.autor,
+                    language: randomMessage.sprache,
+                    animation: 'fade-in 0.5s forwards',
+                    loadingCircle: 'fade-out 0.2s forwards',
+                    font: randomMessage.sprache === 'Russisch' ? 'Neucha' : 'Indie Flower'
+                });
+
+
+
+                timeoutWelcome = setTimeout(function () {
 
                     this.setState({
                         animation: 'fade-out 0.5s forwards'
@@ -81,31 +82,45 @@ class WelcomeCard extends Component {
 
                 }.bind(this), 9500);
 
-                let randomNumber = Math.floor(Math.random() * amountOfMessages);
-                let randomMessage = sortedMessages[randomNumber];
+                intervalWelcome = setInterval(function () {
 
-                let messageText = randomMessage.text;
-                let replacedMessage = messageText.replace('[NAME]', this.state.userfirstname);
+                    setTimeout(function () {
 
-                this.setState({
-                    message: replacedMessage,
-                    author: randomMessage.autor,
-                    language: randomMessage.sprache,
-                    animation: 'fade-in 0.5s forwards',
-                    font: randomMessage.sprache === 'Russisch' ? 'Neucha' : 'Indie Flower'
+                        this.setState({
+                            animation: 'fade-out 0.5s forwards'
+                        });
+
+                    }.bind(this), 9500);
+
+                    let randomNumber = Math.floor(Math.random() * amountOfMessages);
+                    let randomMessage = sortedMessages[randomNumber];
+
+                    let messageText = randomMessage.text;
+                    let replacedMessage = messageText.replace('[NAME]', userInfo.firstname);
+
+                    this.setState({
+                        message: replacedMessage,
+                        author: randomMessage.autor,
+                        language: randomMessage.sprache,
+                        animation: 'fade-in 0.5s forwards',
+                        font: randomMessage.sprache === 'Russisch' ? 'Neucha' : 'Indie Flower'
+                    });
+
+                }.bind(this), 10000);
+
+
+
+
+            },
+                (error) => {
+
+                    console.error(error);
+
                 });
 
-            }.bind(this), 10000);
+        })
 
-            
-
-
-        },
-        (error) => {
-
-            console.error(error);
-
-        });
+        
 
         
 

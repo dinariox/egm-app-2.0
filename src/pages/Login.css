@@ -149,19 +149,10 @@
 
 }
 
-.registerStepperMobile {
-
-    position: absolute;
-    right: 0;
-    left: 0;
-    bottom: 0;
-
-}
-
 .registerCloseButton {
 
     position: absolute !important;
-    right: 0;
+    bottom: 8px;
 
 }
 
@@ -185,12 +176,6 @@
 
 }
 
-.mobileStepperSpacer {
-
-    height: 54px;
-
-}
-
 .loaderStufenpasswort {
 
     margin-right: 8px;
@@ -200,6 +185,12 @@
 @media only screen and (min-width: 1200px) {
 
     .loginTextbox {
+    
+        width: 300px;
+
+    }
+
+    .registerTextbox {
     
         width: 300px;
 

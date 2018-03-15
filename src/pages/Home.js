@@ -34,12 +34,7 @@ class Home extends Component {
         super();
         this.state = {
             pageTitle: 'Start',
-            currentDate: '',
-            user: {
-                firstname: 'Timo',
-                lastname: 'Nowak',
-                stufe: 11
-            }
+            currentDate: ''
         };
 
     }
@@ -104,7 +99,7 @@ class Home extends Component {
 
                 <EGMImageBar title={this.state.pageTitle} date={this.state.currentDate} />
                 
-                <WelcomeCard userfirstname={this.state.user.firstname} />
+                <WelcomeCard />
     
                 <div className="articleCardsWrapper">
                 

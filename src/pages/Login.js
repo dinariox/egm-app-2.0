@@ -89,7 +89,7 @@ class Login extends Component {
             errorRegisterStufe: false,
             successRegisterMessage: '',
 
-            userWillBeStufe: '',
+            willBeStufe: '',
 
             stufenpasswortLoading: false,
 
@@ -160,6 +160,7 @@ class Login extends Component {
         let password2 = this.state.userRegisterPassword2;
         let firstname = this.state.userRegisterFirstname;
         let lastname = this.state.userRegisterLastname;
+        let willBeStufe = this.state.willBeStufe;
 
         
         if (email === '') {
@@ -177,11 +178,19 @@ class Login extends Component {
         if (lastname === '') {
             return this.setState({ registerLoadingBarVisible: false, errorRegisterMessage: 'Es wurde kein Nachname angegeben', errorRegisterLastname: true, registerActiveStep: 2 });
         }
+
+        if (willBeStufe === '') {
+            if (!window.confirm('Du hast kein Stufenpasswort angegeben oder es nicht überprüfen lassen.\nMöchtest du ohne eingetragene Stufe fortfahren?')) {
+
+                return this.setState({ registerLoadingBarVisible: false });
+
+            }
+        }
         
 
         auth.createUserWithEmailAndPassword(email, password).then(() => {
 
-            this.props.handlePostRegister(firstname, lastname, this.state.userWillBeStufe);
+            this.props.handlePostRegister(firstname, lastname, willBeStufe);
 
         }).catch((error) => {
 
@@ -240,7 +249,7 @@ class Login extends Component {
 
             if (this.state.userRegisterStufenpasswort === snapshot.val()) {
 
-                this.setState({ stufenpasswortLoading: false, successRegisterMessage: 'Stufenpasswort für Stufe ' + this.state.userRegisterStufe + ' gültig' });
+                this.setState({ stufenpasswortLoading: false, successRegisterMessage: 'Stufenpasswort für Stufe ' + this.state.userRegisterStufe + ' gültig', willBeStufe: this.state.userRegisterStufe});
 
             } else {
 
@@ -340,12 +349,33 @@ class Login extends Component {
 
 
                 <Dialog fullScreen open={this.state.openRegister} onClose={() => this.setState({openRegister: false})} transition={Transition} >
+
+                    <MobileStepper
+                        variant="progress"
+                        steps={4}
+                        position="static"
+                        activeStep={this.state.registerActiveStep}
+                        nextButton={
+                            this.state.registerActiveStep === 3 ?
+                                <Button size="small" onClick={() => this.handleRegister()}>
+                                    Fertig
+                                    <KeyboardArrowRight />
+                                </Button>
+                                :
+                                <Button size="small" onClick={() => this.handleNext()}>
+                                    Weiter
+                                    <KeyboardArrowRight />
+                                </Button>
+                        }
+                        backButton={
+                            <Button size="small" onClick={() => this.handleBack()} disabled={this.state.registerActiveStep === 0}>
+                                <KeyboardArrowLeft />
+                                Zurück
+                            </Button>
+                        }
+                    />
                 
                     <LinearProgress style={{ display: this.state.registerLoadingBarVisible ? '' : 'none' }} />
-
-                    <IconButton className="registerCloseButton" aria-label="Close">
-                        <CloseIcon />
-                    </IconButton>
 
                     <Typography variant="headline" className="registerTitle">
                         Registrieren
@@ -496,32 +526,9 @@ class Login extends Component {
 
                     </div>
 
-
-                    <MobileStepper
-                        variant="dots"
-                        steps={4}
-                        position="static"
-                        activeStep={this.state.registerActiveStep}
-                        className="registerStepperMobile"
-                        nextButton={
-                            this.state.registerActiveStep === 3 ?
-                                <Button size="small" onClick={() => this.handleRegister()}>
-                                    Fertig
-                                    <KeyboardArrowRight />
-                                </Button>
-                            :
-                                <Button size="small" onClick={() => this.handleNext()}>
-                                    Weiter
-                                    <KeyboardArrowRight />
-                                </Button>
-                        }
-                        backButton={
-                            <Button size="small" onClick={() => this.handleBack()} disabled={this.state.registerActiveStep === 0}>
-                                <KeyboardArrowLeft />
-                                Zurück
-                            </Button>
-                        }
-                    />
+                    <Button className="registerCloseButton" aria-label="Close" onClick={() => this.setState({ openRegister: false })}>
+                        <CloseIcon /> Abbrechen
+                    </Button>
                 
                 </Dialog>
 
