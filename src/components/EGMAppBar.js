@@ -27,6 +27,9 @@ import ExpandIcon from 'material-ui-icons/ExpandMore';
 import SettingsIcon from 'material-ui-icons/Settings';
 import HelpIcon from 'material-ui-icons/Help';
 import NotificationsIcon from 'material-ui-icons/Notifications';
+import TodayViewIcon from 'material-ui-icons/ViewDay';
+import WeekViewIcon from 'material-ui-icons/ViewWeek';
+import CloseIcon from 'material-ui-icons/Close';
 // import NotificationsActiveIcon from 'material-ui-icons/NotificationsActive';
 
 import personImg from './../img/person.jpg';
@@ -96,15 +99,46 @@ class EGMAppBar extends Component {
 
         return (
             <div className="root">
-                <AppBar position="fixed" style={{background: this.state.background, boxShadow: this.state.shadow, transition: this.state.transition}}>
+                <AppBar position="fixed" style={{ background: this.props.stundenplanView === 'editStunden' ? '#EF5350' : this.state.background, boxShadow: this.state.shadow, transition: this.props.imageMode ? this.state.transition : 'background 200ms' }}>
                     <Toolbar>
                         <MenuDrawerLeft />
                         <Typography variant="title" color="inherit" className="flex" style={this.state.transparent ? { opacity: 0, transition: 'opacity 200ms' } : { opacity: 1, transition: 'opacity 200ms'} }>
                             {this.state.transparent ? '' : this.props.title}
                         </Typography>
-                        <IconButton className="notificationButton" color="secondary" aria-label="Benachrichtigungen">
-                            <NotificationsIcon />
-                        </IconButton>
+
+                        { this.props.stundenplan ?
+
+                            this.props.stundenplanView === 'week' ?
+                                <IconButton className="notificationButton" color="secondary" aria-label="Zu Tagesansicht" onClick={() => this.props.stundenplanChangeView('day')}>
+                                    <TodayViewIcon />
+                                </IconButton>
+                            :
+
+                                this.props.stundenplanView === 'day' ?
+
+                                    <IconButton className="notificationButton" color="secondary" aria-label="Zu Wochenansicht" onClick={() => this.props.stundenplanChangeView('week')}>
+                                        <WeekViewIcon />
+                                    </IconButton>
+                                :
+                                    
+                                    this.props.stundenplanView === 'editStunden' ?
+
+                                        <IconButton className="notificationButton" color="secondary" aria-label="Zu den Einstellungen" onClick={() => this.props.stundenplanChangeView('settings')}>
+                                            <SettingsIcon />
+                                        </IconButton>
+
+                                    :
+
+                                        <IconButton className="notificationButton" color="secondary" aria-label="Einstellungen schließen" onClick={() => this.props.stundenplanChangeView('editStunden')}>
+                                            <CloseIcon />
+                                        </IconButton>
+
+                          :
+
+                            <IconButton className="notificationButton" color="secondary" aria-label="Benachrichtigungen">
+                                <NotificationsIcon />
+                            </IconButton>
+                        }
                     </Toolbar>
                 </AppBar>
             </div>
@@ -170,8 +204,6 @@ class CurrentAccountDisplay extends Component {
         db.ref('/users/').orderByChild('uid').equalTo(auth.currentUser.uid).once('value').then((snapshot) => {
 
             let data = snapshot.val();
-
-            console.log(data);
             let userInfo = data[Object.keys(data)[0]]
             this.setState({ userFirstname: userInfo.firstname, userLastname: userInfo.lastname, userStufe: userInfo.stufe });
 
@@ -252,7 +284,7 @@ class MenuDrawerLeft extends Component {
                     </ListItemIcon>
                     <ListItemText primary="Vertretungsplan" />
                 </ListItem>
-                <ListItem button>
+                <ListItem button component={Link} to="/stundenplan">
                     <ListItemIcon>
                         <StundenplanIcon />
                     </ListItemIcon>

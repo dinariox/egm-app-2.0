@@ -36,8 +36,6 @@ class WelcomeCard extends Component {
         db.ref('users').orderByChild('uid').equalTo(auth.currentUser.uid).once('value').then(snapshot => {
 
             let data = snapshot.val();
-
-            console.log(data);
             var userInfo = data[Object.keys(data)[0]]
 
 

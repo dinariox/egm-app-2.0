@@ -72,6 +72,10 @@ class Login extends Component {
             errorPassword: false,
             errorEmail: false,
 
+            userResetEmail: '',
+            errorResetEmail: false,
+            errorResetMessage: '',
+
             userRegisterEmail: '',
             userRegisterPassword: '',
             userRegisterPassword2: '',
@@ -95,6 +99,7 @@ class Login extends Component {
 
             openRegister: false,
             openPasswordReset: false,
+            passwordResetMessage: false,
             registerActiveStep: 0,
             windowHeight: Math.max(document.documentElement.clientHeight, window.innerHeight || 0)
         };
@@ -226,6 +231,44 @@ class Login extends Component {
     }
 
 
+    handlePasswordReset() {
+
+        let resetEmail = this.state.userResetEmail;
+
+        if (resetEmail === '') {
+
+            return this.setState({ errorResetEmail: true, errorResetMessage: 'Du hast keine Email eingegeben!' });
+
+        }
+
+        auth.sendPasswordResetEmail(resetEmail).catch(error => {
+
+            switch (error.code) {
+
+                case 'auth/invalid-email':
+                    return this.setState({ errorResetEmail: true, errorResetMessage: 'Die angegebene Email ist ungültig.' });
+
+                case 'auth/user-not-found':
+                    return this.setState({ errorResetEmail: true, errorResetMessage: 'Es existiert kein Konto mit dieser Email.' });
+
+                default:
+                    console.error(error.code, error.message);
+                    return this.setState({ errorResetMessage: 'Unbekannter Fehler. Bitte versuche es erneut.' });
+
+            }
+
+        });
+
+        this.setState({
+
+            openPasswordReset: false,
+            passwordResetMessage: true
+
+        });
+
+    }
+
+
     checkStufenpasswort() {
 
         this.setState({ stufenpasswortLoading: true, errorRegisterStufenpasswort: false, errorRegisterStufe: false, successRegisterMessage: '', errorRegisterMessage: '' });
@@ -278,16 +321,27 @@ class Login extends Component {
 
     }
 
+
     handleNext() {
         this.setState({
             registerActiveStep: this.state.registerActiveStep + 1,
         });
     }
 
+
     handleBack() {
         this.setState({
             registerActiveStep: this.state.registerActiveStep - 1,
         });
+    }
+
+
+    handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        this.setState({ passwordResetMessage: false });
     }
 
 
@@ -335,7 +389,7 @@ class Login extends Component {
                             <Typography variant="title" className="lowerTexts">
                                 Du hast dein Passwort vergessen?
                             </Typography>
-                            <Button className="passwordButton" onClick={() => { }}>Passwort zurücksetzen</Button>
+                            <Button className="passwordButton" onClick={() => { this.setState({ openPasswordReset: true }) }}>Passwort zurücksetzen</Button>
 
                         </div>
 
@@ -348,6 +402,7 @@ class Login extends Component {
                 </div>
 
 
+                {/* REGISTER */}
                 <Dialog fullScreen open={this.state.openRegister} onClose={() => this.setState({openRegister: false})} transition={Transition} >
 
                     <MobileStepper
@@ -531,6 +586,73 @@ class Login extends Component {
                     </Button>
                 
                 </Dialog>
+
+
+                {/* PASSWORD RESET */}
+                <Dialog fullScreen open={this.state.openPasswordReset} onClose={() => this.setState({ openPasswordReset: false })} transition={Transition} >
+                    
+                    <div className="paddingAround textCenter">
+
+                        <Typography variant="headline" className="resetTitle">
+                            Passwort zurücksetzen
+                        </Typography>
+
+                        <Typography paragraph variant="body1" className="lowerTexts registerExplainText">
+                            Du hast dein Passwort vergessen und möchtest es zurücksetzen?
+                        </Typography>
+                        <Typography variant="body1" className="lowerTexts registerExplainText">
+                            Gib dazu unten einfach deine Email-Adresse ein, mit der du dich anmeldest. Dir wird dann eine Email mit einem Link geschickt, mit dem du dein neues Passwort setzen kannst.
+                        </Typography>
+
+                        <TextField
+                            error={this.state.errorResetEmail}
+                            id="userRegisterEmail"
+                            label="Email"
+                            type="email"
+                            className="registerTextbox"
+                            value={this.state.userResetEmail}
+                            onChange={this.handleTextChance('userResetEmail')}
+                            margin="normal"
+                        />
+
+                        <Typography variant="body1" className="registerErrorMessage">
+                            {this.state.errorResetMessage}
+                        </Typography>
+
+                        <Button aria-label="Confirm" onClick={() => this.handlePasswordReset()}>
+                            Reset-Link senden
+                        </Button>
+
+                    </div>
+
+                    <Button className="registerCloseButton" aria-label="Close" onClick={() => this.setState({ openPasswordReset: false })}>
+                        <CloseIcon /> Abbrechen
+                    </Button>
+
+                </Dialog>
+
+                <Snackbar
+                    anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'left',
+                    }}
+                    open={this.state.passwordResetMessage}
+                    autoHideDuration={6000}
+                    SnackbarContentProps={{
+                        'aria-describedby': 'message-id',
+                    }}
+                    message={<span id="message-id">Eine Email mit einen Passwort-Reset-Link wurde gesendet. Überprüfe deinen Posteingang und klicke auf den Link in der Email</span>}
+                    action={[
+                        <IconButton
+                            key="close"
+                            aria-label="Close"
+                            color="inherit"
+                            onClick={this.handleClose}
+                        >
+                            <CloseIcon />
+                        </IconButton>,
+                    ]}
+                />
 
             </MuiThemeProvider>
 

@@ -1,0 +1,36 @@
+
+body {
+
+    overflow-x: hidden;
+
+}
+
+.timetableItem {
+
+    padding: 8px !important;
+    min-width: 100% !important;
+    text-align: left !important;
+    justify-content: left !important;
+
+}
+
+.stundenplanFAB {
+
+    position: fixed !important;
+    bottom: 28px;
+    right: 24px;
+    color: white !important;
+
+}
+
+.fachSelect {
+
+    width: 150px;
+
+}
+
+.variantSelect {
+
+    width: 120px;
+
+}

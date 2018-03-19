@@ -13,7 +13,7 @@ import theme from './../theme';
 // MUI Components
 import Button from 'material-ui/Button';
 import Typography from 'material-ui/Typography';
-import Reboot from 'material-ui/Reboot';
+import CssBaseline from 'material-ui/CssBaseline';
 import Card, { CardContent } from 'material-ui/Card';
 import List, { ListItem, ListItemText } from 'material-ui/List';
 import Avatar from 'material-ui/Avatar';
@@ -166,7 +166,7 @@ class Plan extends Component {
 
             <MuiThemeProvider theme={theme}>
 
-                <Reboot />
+                <CssBaseline />
 
                 <EGMAppBar title={this.state.pageTitle} />
 

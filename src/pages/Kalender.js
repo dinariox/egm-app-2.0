@@ -4,7 +4,7 @@ import 'typeface-roboto';
 import './../main.css';
 
 // MUI
-import Reboot from 'material-ui/Reboot';
+import CssBaseline from 'material-ui/CssBaseline';
 import { MuiThemeProvider } from 'material-ui/styles';
 import theme from './../theme';
 
@@ -145,7 +145,7 @@ class Home extends Component {
 
             <MuiThemeProvider theme={theme}>
 
-                    <Reboot />
+                    <CssBaseline />
 
                     <EGMAppBar title={this.state.pageTitle} />
 

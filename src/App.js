@@ -5,8 +5,6 @@ import {
 } from "react-router-dom";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
-import Register from "./pages/Register";
-import Reset from "./pages/PasswordReset";
 import Plan from "./pages/Plan";
 import Kalender from "./pages/Kalender";
 import News from "./pages/archiv/News";
@@ -16,6 +14,7 @@ import OpenArticle from "./pages/archiv/OpenArticle";
 import Stufenbrett from "./pages/stufenbrett/Stufenbrett";
 import OpenStufenbrett from "./pages/stufenbrett/OpenStufenbrett";
 import Sharens from "./pages/Sharens";
+import Stundenplan from "./pages/Stundenplan";
 
 import { CircularProgress } from 'material-ui/Progress';
 
@@ -202,6 +201,7 @@ class App extends Component {
                         <Route path="/stufenbrett" exact component={Stufenbrett} />
                         <Route path="/stufenbrett/open/:articleID" exact component={OpenStufenbrett} />
                         <Route path="/sharens" component={Sharens} />
+                        <Route path="/stundenplan" component={Stundenplan} />
 
                     </div>
 
