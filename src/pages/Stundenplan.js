@@ -27,12 +27,17 @@ import Dialog, {
 import Input, { InputLabel } from 'material-ui/Input';
 import { MenuItem } from 'material-ui/Menu';
 import { FormControl, FormHelperText } from 'material-ui/Form';
+import List, { ListItem, ListItemText, ListItemSecondaryAction } from 'material-ui/List';
 import Select from 'material-ui/Select';
+import IconButton from 'material-ui/IconButton';
 import Zoom from 'material-ui/transitions/Zoom';
 import Slide from 'material-ui/transitions/Slide';
 
 import EditIcon from 'material-ui-icons/Edit';
 import DoneIcon from 'material-ui-icons/Done';
+import DeleteIcon from 'material-ui-icons/Delete';
+import AddIcon from 'material-ui-icons/Add';
+import CloseIcon from 'material-ui-icons/Close';
 
 
 // Own components
@@ -40,6 +45,7 @@ import EGMAppBar from './../components/EGMAppBar';
 
 // Firebase References
 import firebase from './../firebase';
+import { TextField } from 'material-ui';
 const db = firebase.database();
 const auth = firebase.auth();
 // const storage = firebase.storage();
@@ -87,6 +93,21 @@ class Stundenplan extends Component {
             selectedFach: '',
             selectedVariant: 0,
 
+            setupFaecherList: [],
+            setupMode: 'none',
+            setupNotFirstTime: false,
+
+            setupFachName: '',
+            setupFachShortname: '',
+            setupFachLehrer: '',
+            setupFachShortlehrer: '',
+            setupFachColor: '',
+            setupFachTextcolor: '',
+            setupFachAnmerkung: '',
+            setupFachRaum1: '',
+            setupFachRaum2: '',
+            setupFachRaum3: '',
+
             displayNothingToSee: false,
 
             stundenplanLoaded: false,
@@ -103,55 +124,80 @@ class Stundenplan extends Component {
 
     componentDidMount() {
 
+        this.loadStundenplan();
+
+    }
+
+
+    loadStundenplan() {
+
         db.ref('/users/').orderByChild('uid').equalTo(auth.currentUser.uid).on('value', (snapshot) => {
 
             let data = snapshot.val();
             let stundenplanInfo = data[Object.keys(data)[0]].stundenplan;
 
-            if(!stundenplanInfo) {
-                console.warn('User did not set up the Stundenplan yet')
-                
-                this.setState({ displayNothingToSee: true });
-                return;
+            if (!stundenplanInfo) {
 
-                // TODO: Setup Wizard anzeigen
 
-            }
+                this.setState({ activeView: 'setup' });
 
-            let stunden = stundenplanInfo.stunden;
-            let faecher = stundenplanInfo.faecher;
 
-            for(let day in stunden) {
+            } else {
 
-                let dayInfo = {};
+                let stunden = stundenplanInfo.stunden;
+                let faecher = stundenplanInfo.faecher;
 
-                stunden[day].forEach((stunde, stundeIndex) => {
+                for (let day in stunden) {
 
-                    if (stunde.shortname) {
+                    let dayInfo = {};
 
-                        faecher.forEach(fach => {
+                    stunden[day].forEach((stunde, stundeIndex) => {
 
-                            let foundFach = fach.shortname === stunde.shortname;
+                        if (stunde.shortname) {
 
-                            if (foundFach) {
+                            let invalidStunde = true;
 
-                                dayInfo[stundeIndex] = Object.assign({variant: stunde.variant}, fach);
-                            
+                            faecher.forEach(fach => {
+
+                                let foundFach = fach.shortname === stunde.shortname;
+
+                                if (foundFach) {
+
+                                    dayInfo[stundeIndex] = Object.assign({ variant: stunde.variant }, fach);
+                                    invalidStunde = false;
+
+                                }
+
+                            });
+
+
+                            if (invalidStunde) {
+
+                                db.ref("/users/").orderByChild("uid").equalTo(auth.currentUser.uid).once("child_added", snapshot => {
+
+                                    let refToStunde = '/users/' + snapshot.ref.path.pieces_[1] + '/stundenplan/stunden/' + day + '/' + stundeIndex
+
+                                    db.ref(refToStunde).update({
+                                        shortname: '',
+                                        variant: 0
+                                    });
+
+                                });
+
+
                             }
 
-                        });
+                        }
 
-                    }
-                    
-                    
+                    });
 
-                });
+                    this.setState({ [day]: dayInfo });
 
-                this.setState({ [day]: dayInfo });
+                }
+
+                this.setState({ stundenplanLoaded: true });
 
             }
-
-            this.setState({ stundenplanLoaded: true });
 
         });
 
@@ -235,7 +281,10 @@ class Stundenplan extends Component {
 
             if (this.state.selectedFach === '') {
 
-                db.ref(refToStunde).remove();
+                db.ref(refToStunde).update({
+                    shortname: '',
+                    variant: 0
+                });
 
             } else {
 
@@ -279,6 +328,157 @@ class Stundenplan extends Component {
         })
 
         return searchedFach;
+
+    }
+
+
+    addFach() {
+
+        if (!this.state.setupFachName) {
+            return alert('Bitte gib einen Namen für das Fach ein');
+        }
+        if (!this.state.setupFachShortname) {
+            return alert('Bitte gib ein Kürzel für das Fach ein');
+        }
+        if (!this.state.setupFachColor) {
+            return alert('Bitte wähle eine Hintergrundfarbe für das Fach aus');
+        }
+        if (!this.state.setupFachTextcolor) {
+            return alert('Bitte wähle eine Textfarbe für das Fach aus');
+        }
+
+        let faecherList = this.state.setupFaecherList;
+
+        let raumList = [''];
+
+        if (this.state.setupFachRaum1) {
+            raumList[0] = this.state.setupFachRaum1
+        }
+        if (this.state.setupFachRaum2) {
+            raumList[1] = this.state.setupFachRaum2
+        }
+        if (this.state.setupFachRaum3) {
+            raumList[2] = this.state.setupFachRaum3
+        }
+
+        faecherList.push({
+            name: this.state.setupFachName,
+            shortname: this.state.setupFachShortname,
+            lehrer: this.state.setupFachLehrer,
+            shortlehrer: this.state.setupFachShortlehrer,
+            farbe: this.state.setupFachColor,
+            textfarbe: this.state.setupFachTextcolor,
+            anmerkung: this.state.setupFachAnmerkung,
+            raum: raumList
+        })
+
+        this.setState({
+            setupFaecherList: faecherList,
+            setupMode: 'none',
+            setupFachName: '',
+            setupFachShortname: '',
+            setupFachLehrer: '',
+            setupFachShortlehrer: '',
+            setupFachColor: '',
+            setupFachTextcolor: '',
+            setupFachAnmerkung: '',
+            setupFachRaum1: '',
+            setupFachRaum2: '',
+            setupFachRaum3: '',
+        })
+
+    }
+
+
+    cancleAddFach() {
+
+        this.setState({
+            setupMode: 'none',
+            setupFachName: '',
+            setupFachShortname: '',
+            setupFachLehrer: '',
+            setupFachShortlehrer: '',
+            setupFachColor: '',
+            setupFachTextcolor: '',
+            setupFachAnmerkung: '',
+            setupFachRaum1: '',
+            setupFachRaum2: '',
+            setupFachRaum3: '',
+        })
+
+    }
+
+
+    removeFach(index) {
+
+        let faecherList = this.state.setupFaecherList;
+
+        faecherList.splice(index, 1);
+
+        this.setState({ setupFaecherList: faecherList });
+
+    }
+
+
+    finishSetup() {
+
+        if (this.state.setupMode === 'add') {
+            return alert('Bitte schließe erst das Hinzufügen von dem aktuell geöffneten Fach ab');
+        }
+        if (this.state.setupFaecherList.length < 1) {
+            return alert('Bitte füge mindestens 1 Fach hinzu');
+        }
+
+        this.setState({ activeView: 'week' });
+
+        db.ref("/users/").orderByChild("uid").equalTo(auth.currentUser.uid).once("child_added", snapshot => {
+
+            let refToPlan = '/users/' + snapshot.ref.path.pieces_[1] + '/stundenplan/'
+
+            if (this.state.setupNotFirstTime) {
+
+                db.ref(refToPlan).update({
+                    faecher: this.state.setupFaecherList
+                }).then(() => this.loadStundenplan());
+
+            } else {
+
+                db.ref(refToPlan).set({
+                    faecher: this.state.setupFaecherList,
+                    stunden: {
+                        montag: { 1: { shortname: "", variant: 0 }, 2: { shortname: "", variant: 0 }, 3: { shortname: "", variant: 0 }, 4: { shortname: "", variant: 0 }, 5: { shortname: "", variant: 0 }, 6: { shortname: "", variant: 0 }, 7: { shortname: "", variant: 0 }, 8: { shortname: "", variant: 0 } },
+                        dienstag: { 1: { shortname: "", variant: 0 }, 2: { shortname: "", variant: 0 }, 3: { shortname: "", variant: 0 }, 4: { shortname: "", variant: 0 }, 5: { shortname: "", variant: 0 }, 6: { shortname: "", variant: 0 }, 7: { shortname: "", variant: 0 }, 8: { shortname: "", variant: 0 } },
+                        mittwoch: { 1: { shortname: "", variant: 0 }, 2: { shortname: "", variant: 0 }, 3: { shortname: "", variant: 0 }, 4: { shortname: "", variant: 0 }, 5: { shortname: "", variant: 0 }, 6: { shortname: "", variant: 0 }, 7: { shortname: "", variant: 0 }, 8: { shortname: "", variant: 0 } },
+                        donnerstag: { 1: { shortname: "", variant: 0 }, 2: { shortname: "", variant: 0 }, 3: { shortname: "", variant: 0 }, 4: { shortname: "", variant: 0 }, 5: { shortname: "", variant: 0 }, 6: { shortname: "", variant: 0 }, 7: { shortname: "", variant: 0 }, 8: { shortname: "", variant: 0 } },
+                        freitag: { 1: { shortname: "", variant: 0 }, 2: { shortname: "", variant: 0 }, 3: { shortname: "", variant: 0 }, 4: { shortname: "", variant: 0 }, 5: { shortname: "", variant: 0 }, 6: { shortname: "", variant: 0 }, 7: { shortname: "", variant: 0 }, 8: { shortname: "", variant: 0 } }
+                    }
+                }).then(() => this.loadStundenplan());
+
+            }
+
+            
+
+        });
+
+    }
+
+
+    reopenSetup() {
+
+        db.ref('/users/').orderByChild('uid').equalTo(auth.currentUser.uid).once('value', (snapshot) => {
+
+            let data = snapshot.val();
+            let stundenplanInfo = data[Object.keys(data)[0]].stundenplan;
+
+            let faecher = stundenplanInfo.faecher;
+
+            this.setState({ activeView: 'setup', setupNotFirstTime: true, setupFaecherList: faecher })
+
+        }, err => {
+
+            alert('Es ist ein Fehler aufgetreten :(\n Bitte prüfe, ob du mit dem Internet verbunden bist und versuche es erneut')
+
+        });   
 
     }
 
@@ -389,10 +589,246 @@ class Stundenplan extends Component {
 
                         :
 
-                            <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translateX(-50%) translateY(-50%)', textAlign: 'center' }}>
-                                <Typography variant="display2" paragraph style={{ fontWeight: 300 }}>:(</Typography>
-                                <Typography variant="headline" style={{ fontWeight: 300 }}>Noch keine Einstellungen vorhanden</Typography>
-                            </div>
+                            this.state.activeView === 'setup' ?
+
+                                <div style={{ position: 'absolute', width: '100%', textAlign: 'center', marginTop: 24 }}>
+                                    <Typography variant="headline">Willkommen beim Stundenplan!</Typography>
+                                    <Typography variant="body1" style={{ paddingLeft: 8, paddingRight: 8 }} paragraph>Füge unten deine Fächer hinzu und fülle die Informationen aus.</Typography>
+
+                                    <Divider />
+
+                                    <List className="setupFaecherList">
+
+                                        {
+
+                                            this.state.setupFaecherList.length === 0 ?
+
+                                                <Typography variant="body1">Noch keine Fächer vorhanden</Typography>
+
+                                            :
+
+                                                null
+
+                                        }
+                                        
+                                        {
+
+                                            this.state.setupFaecherList.map((fach, index) => {
+
+                                                return (
+
+                                                    <ListItem button dense key={index}>
+                                                        <ListItemText primary={fach.name} />
+                                                        <ListItemSecondaryAction>
+                                                            <IconButton aria-label="Löschen" onClick={() => this.removeFach(index)}>
+                                                                <DeleteIcon />
+                                                            </IconButton>
+                                                        </ListItemSecondaryAction>
+                                                    </ListItem>
+
+                                                );
+
+                                            })
+
+                                        }
+                                        
+                                    </List>
+
+                                    <Divider />
+
+                                    {
+
+                                        this.state.setupMode === 'none' ?
+
+                                            <Button color="primary" style={{ marginTop: 8 }} onClick={() => this.setState({ setupMode: 'add' })}>
+                                                <AddIcon />&nbsp;Fach erstellen
+                                            </Button>
+
+                                        :
+
+                                            null
+
+                                    }
+
+
+                                    {
+
+                                        this.state.setupMode === 'add' ?
+
+                                        <div>
+
+                                            <Grid container spacing={16} style={{ padding: 16 }}>
+
+                                                <Grid item xs={8}>
+                                                    <TextField
+                                                        id="setupFachName"
+                                                        label="Fachname"
+                                                        className="setupTextbox"
+                                                        value={this.state.setupFachName}
+                                                        onChange={(event) => this.setState({ setupFachName: event.target.value })}
+                                                        margin="none"
+                                                        maxLength="20"
+                                                    />
+                                                </Grid>
+                                                <Grid item xs={4}>
+                                                    <TextField
+                                                        id="setupFachShortname"
+                                                        label="Fachkürzel"
+                                                        className="setupTextbox"
+                                                        value={this.state.setupFachShortname}
+                                                        onChange={(event) => this.setState({ setupFachShortname: event.target.value })}
+                                                        margin="none"
+                                                        maxLength="4"
+                                                    />
+                                                </Grid>
+
+
+                                                <Grid item xs={8}>
+                                                    <TextField
+                                                        id="setupFachLehrer"
+                                                        label="Lehrer"
+                                                        className="setupTextbox"
+                                                        value={this.state.setupFachLehrer}
+                                                        onChange={(event) => this.setState({ setupFachLehrer: event.target.value })}
+                                                        maxLength="20"
+                                                        margin="none"
+                                                    />
+                                                </Grid>
+                                                <Grid item xs={4}>
+                                                    <TextField
+                                                        id="setupFachShortlehrer"
+                                                        label="Lehrerkürzel"
+                                                        className="setupTextbox"
+                                                        value={this.state.setupFachShortlehrer}
+                                                        onChange={(event) => this.setState({ setupFachShortlehrer: event.target.value })}
+                                                        maxLength="4"
+                                                        margin="none"
+                                                    />
+                                                </Grid>
+
+                                                <Grid item xs={4}>
+                                                    <TextField
+                                                        id="setupFachRaum1"
+                                                        label="Raum 1"
+                                                        className="setupTextbox"
+                                                        value={this.state.setupFachRaum1}
+                                                        onChange={(event) => this.setState({ setupFachRaum1: event.target.value })}
+                                                        margin="none"
+                                                        maxLength="4"
+                                                    />
+                                                </Grid>
+                                                <Grid item xs={4}>
+                                                    <TextField
+                                                        id="setupFachRaum2"
+                                                        label="Raum 2"
+                                                        className="setupTextbox"
+                                                        value={this.state.setupFachRaum2}
+                                                        onChange={(event) => this.setState({ setupFachRaum2: event.target.value })}
+                                                        margin="none"
+                                                        maxLength="4"
+                                                    />
+                                                </Grid>
+                                                <Grid item xs={4}>
+                                                    <TextField
+                                                        id="setupFachRaum3"
+                                                        label="Raum 3"
+                                                        className="setupTextbox"
+                                                        value={this.state.setupFachRaum3}
+                                                        onChange={(event) => this.setState({ setupFachRaum3: event.target.value })}
+                                                        margin="none"
+                                                        maxLength="4"
+                                                    />
+                                                </Grid>
+
+
+                                                <Grid item xs={12}>
+                                                    <TextField
+                                                        id="setupFachAnmerkung"
+                                                        label="Anmerkungen"
+                                                        className="setupTextbox"
+                                                        value={this.state.setupFachAnmerkung}
+                                                        onChange={(event) => this.setState({ setupFachAnmerkung: event.target.value })}
+                                                        margin="none"
+                                                        maxLength="150"
+                                                    />
+                                                </Grid>
+
+                                                {
+
+                                                    ['#D32F2F', '#C2185B', '#7E57C2', '#1565C0', '#388E3C', '#FF7043'].map(color => {
+
+                                                        return (
+
+                                                            <Grid item xs={2} key={color}>
+                                                                <IconButton style={{ backgroundColor: color, transition: 'border-color 200ms', border: '4px solid', borderColor: this.state.setupFachColor === color ? '#333' : 'white' }} onClick={() => this.setState({ setupFachColor: color })}></IconButton>
+                                                            </Grid>
+
+                                                        );
+
+                                                    })
+
+                                                }
+
+                                                {
+
+                                                    ['#EF5350', '#F06292', '#5C6BC0', '#42A5F5', '#66BB6A', '#FFEE58'].map(color => {
+
+                                                        return (
+
+                                                            <Grid item xs={2} key={color}>
+                                                                <IconButton style={{backgroundColor: color, transition: 'border-color 200ms', border: '4px solid', borderColor: this.state.setupFachColor === color ? '#333' : 'white' }} onClick={() => this.setState({ setupFachColor: color })}></IconButton>
+                                                            </Grid>
+
+                                                        );
+
+                                                    })
+
+                                                }
+
+                                                <Grid item xs={4}>
+                                                    <Typography>Textfarbe:</Typography>
+                                                </Grid>
+                                                <Grid item xs={2}>
+                                                    <IconButton style={{ backgroundColor: this.state.setupFachColor ? this.state.setupFachColor : '#666', transition: 'border-color 200ms, background-color 200ms', border: '4px solid', borderColor: this.state.setupFachTextcolor === '#f7f7f7' ? '#333' : 'white' }} onClick={() => this.setState({ setupFachTextcolor: '#f7f7f7' })}><Typography variant="title" style={{ color: '#f7f7f7' }}>W</Typography></IconButton>
+                                                </Grid>
+                                                <Grid item xs={2}>
+                                                    <IconButton style={{ backgroundColor: this.state.setupFachColor ? this.state.setupFachColor : '#f7f7f7', transition: 'border-color 200ms, background-color 200ms', border: '4px solid', borderColor: this.state.setupFachTextcolor === '#333' ? '#333' : 'white' }} onClick={() => this.setState({ setupFachTextcolor: '#333' })}><Typography variant="title" style={{ color: '#333' }}>S</Typography></IconButton>
+                                                </Grid>
+
+
+                                            </Grid>
+
+                                            <Button color="primary" style={{ marginTop: 8 }} onClick={() => this.cancleAddFach()}>
+                                                    <CloseIcon />&nbsp;Abbrechen
+                                            </Button>
+        
+                                            <Button color="primary" style={{ marginTop: 8 }} onClick={() => this.addFach()}>
+                                                    <DoneIcon />&nbsp;Fach hinzufügen
+                                            </Button>
+
+
+                                        </div>
+
+
+                                    :
+
+                                        null
+
+                                }
+
+
+                                    <Zoom in={this.state.activeView === 'setup'}>
+                                        <Button variant="fab" className="stundenplanFAB" style={{ backgroundColor: '#4CAF50'}} onClick={() => this.finishSetup()}>
+                                            <DoneIcon />
+                                        </Button>
+                                    </Zoom>
+                                </div>
+
+                            :
+
+                                <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translateX(-50%) translateY(-50%)', textAlign: 'center' }}>
+                                    <Button variant="raised" color="primary" onClick={() => this.reopenSetup()}><EditIcon />&nbsp;Fächer bearbeiten</Button>
+                                </div>
                         
 
                     }
@@ -408,7 +844,7 @@ class Stundenplan extends Component {
                     }
                       
 
-                    <Zoom in={this.state.stundenplanLoaded && this.state.activeView !== 'settings'}>
+                    <Zoom in={this.state.stundenplanLoaded && this.state.activeView !== 'settings' && this.state.activeView !== 'setup'}>
                         <Button variant="fab" className="stundenplanFAB" style={{ backgroundColor: this.state.activeView === 'editStunden' ? '#4CAF50' : '#EF5350' }} onClick={() => this.switchStundenEditMode()}>
                             { this.state.activeView === 'editStunden' ?
                                 <DoneIcon />

@@ -186,6 +186,12 @@ exports.onFileUpload = functions.https.onRequest((req, res) => {
                                 }
                             }
                         }).then(()=> {
+
+                            admin.database().ref('/notifications').push({
+                                title: 'EGM App Beta',
+                                message: 'Der Vertretungsplan wurde aktualisiert'
+                            })
+
                             res.status(200).json({
                                 message: "Plans successfully uploaded!"
                             });
@@ -298,18 +304,3 @@ exports.onFileUpload = functions.https.onRequest((req, res) => {
 
 });
 
-
-exports.validateStufenpasswort = functions.https.onRequest((req, res) => {
-
-    cors(req, res, () => {
-
-        console.log(req.get('stufenpasswort'));
-
-        res.set({
-            'Access-Control-Allow-Credentials': true
-        });
-        return res.status(200).send(req.get('stufenpasswort'));
-
-    });
-
-});

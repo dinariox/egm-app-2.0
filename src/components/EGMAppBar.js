@@ -14,6 +14,10 @@ import List, { ListItem, ListItemIcon, ListItemText } from 'material-ui/List';
 import Card, { CardContent } from 'material-ui/Card';
 import Avatar from 'material-ui/Avatar';
 import Button from 'material-ui/Button';
+import Dialog, { DialogTitle, DialogContent, DialogActions } from 'material-ui/Dialog';
+import { FormGroup, FormControlLabel } from 'material-ui/Form';
+import Switch from 'material-ui/Switch';
+
 
 import StartIcon from 'material-ui-icons/Explore';
 import PlanIcon from 'material-ui-icons/List';
@@ -39,6 +43,7 @@ import cardImage from './../img/polyMenuBackground.jpg';
 import firebase from './../firebase';
 const db = firebase.database();
 const auth = firebase.auth();
+const messaging = firebase.messaging();
 // const storage = firebase.storage();
 
 
@@ -57,13 +62,13 @@ class EGMAppBar extends Component {
 
         if (this.props.imageMode) {
 
-            this.state = { background: 'linear-gradient(to bottom, rgba(0,0,0,0.15) 0%,rgba(0,0,0,0.15) 15%,rgba(0,0,0,0) 100%)', shadow: 'none', transition: 'background 200ms, box-shadow 200ms', transparent: true};
+            this.state = { background: 'linear-gradient(to bottom, rgba(0,0,0,0.15) 0%,rgba(0,0,0,0.15) 15%,rgba(0,0,0,0) 100%)', shadow: 'none', transition: 'background 200ms, box-shadow 200ms', transparent: true, checkedNotifications: false};
 
             this.checkScroll = this.checkScroll.bind(this);
 
         } else {
 
-            this.state = {background: primaryColor, shadow: ''};
+            this.state = {background: primaryColor, shadow: '', checkedNotifications: false};
 
         }
 
@@ -85,6 +90,17 @@ class EGMAppBar extends Component {
             window.addEventListener('scroll', this.checkScroll);
         }
 
+        db.ref('/tokens/' + auth.currentUser.uid).once('value', snapshot => {
+
+            if (snapshot.exists()) {
+                
+                this.setState({ checkedNotifications: true });
+                return;
+
+            }
+
+        });
+
     }
 
     componentWillUnmount(){
@@ -95,15 +111,91 @@ class EGMAppBar extends Component {
 
     }
 
+
+    switchNotifications = event => {
+
+        if (event.target.checked) {
+            this.activateNotifications();
+        } else {
+            this.setState({ checkedNotifications: false });
+            db.ref('/tokens/' + auth.currentUser.uid).remove();
+        }
+
+    }
+
+    
+    activateNotifications() {
+
+        messaging.requestPermission()
+            .then(() => {
+                console.log('Notification permission granted.');
+                this.setState({ checkedNotifications: true });
+                return messaging.getToken();
+            })
+            .then(token => {
+
+                db.ref('/tokens').orderByChild('token').equalTo(token).once('value', snapshot => {
+
+                    if (snapshot.exists()) {
+                        console.log('Token is already in the database');
+                        return;
+                    }
+
+                    db.ref('/tokens/' + auth.currentUser.uid).set({
+
+                        token: token
+
+                    }).then(() => {
+                        console.log('Token uploaded to database', token);
+                    }).catch((error) => {
+                        console.error('Token upload failed', error);
+                    });
+
+                });
+
+
+            })
+            .catch(err => {
+
+                if (err.code === 'messaging/permission-blocked') {
+
+                    this.setState({ checkedNotifications: false });
+                    return alert('Die Berechtigung Push-Benachrichtungen zu senden wurde blockiert!\nUm Benachrichtungen nutzen zu können gehe in die Einstellungen deines Browsers und lösche die EGM App aus der Blockierten-Liste');
+
+                }
+
+                console.log('FCM Error:', err);
+                this.setState({ checkedNotifications: false });
+
+            });
+
+    }
+
+
     render() {
 
         return (
             <div className="root">
-                <AppBar position="fixed" style={{ background: this.props.stundenplanView === 'editStunden' ? '#EF5350' : this.state.background, boxShadow: this.state.shadow, transition: this.props.imageMode ? this.state.transition : 'background 200ms' }}>
+                <AppBar position="fixed" style={{ background: this.props.stundenplanView === 'editStunden' || this.props.stundenplanView === 'settings'  ? '#EF5350' : this.state.background, boxShadow: this.state.shadow, transition: this.props.imageMode ? this.state.transition : 'background 200ms' }}>
                     <Toolbar>
                         <MenuDrawerLeft />
                         <Typography variant="title" color="inherit" className="flex" style={this.state.transparent ? { opacity: 0, transition: 'opacity 200ms' } : { opacity: 1, transition: 'opacity 200ms'} }>
-                            {this.state.transparent ? '' : this.props.title}
+                            {
+                                this.state.transparent ?
+
+                                    ''
+
+                                    :
+                                    
+                                    this.props.stundenplanView === 'settings' ?
+
+                                        'Stundenplan-Optionen'
+
+                                        :
+
+                                        this.props.title
+                                        
+                                }
                         </Typography>
 
                         { this.props.stundenplan ?
@@ -129,18 +221,53 @@ class EGMAppBar extends Component {
 
                                     :
 
-                                        <IconButton className="notificationButton" color="secondary" aria-label="Einstellungen schließen" onClick={() => this.props.stundenplanChangeView('editStunden')}>
-                                            <CloseIcon />
-                                        </IconButton>
+                                        this.props.stundenplanView === 'setup' ?
+
+                                            null
+
+                                        :
+
+                                            <IconButton className="notificationButton" color="secondary" aria-label="Einstellungen schließen" onClick={() => this.props.stundenplanChangeView('editStunden')}>
+                                                <CloseIcon />
+                                            </IconButton>
 
                           :
 
-                            <IconButton className="notificationButton" color="secondary" aria-label="Benachrichtigungen">
+                            <IconButton className="notificationButton" color="secondary" aria-label="Benachrichtigungen" onClick={() => this.setState({ openNotifications: true })}>
                                 <NotificationsIcon />
                             </IconButton>
                         }
                     </Toolbar>
                 </AppBar>
+
+                <Dialog open={this.state.openNotifications} onClose={() => this.setState({ openNotifications: false })} aria-labelledby="form-dialog-title">
+
+                        <DialogTitle>Push-Benachrichtigungen</DialogTitle>
+
+                        <DialogContent>
+
+                            <Typography variant="body1" paragraph>
+                                Push-Benachrichtigungen funktionieren momentan leider nur auf Android-Smartphones, Windows PC und Macs.<br />
+                                Um sie zu aktivieren tippe auf den Schalter unten und erlaube Benachrichtigungen in dem Dialogfeld, das dein Browser öffnet.
+                            </Typography>
+
+                            <FormControlLabel
+                                control={
+                                    <Switch
+                                        checked={this.state.checkedNotifications}
+                                        onChange={this.switchNotifications}
+                                        value="checkedNotifications"
+                                        color="primary"
+                                    />
+                                }
+                                label="Push-Benachrichtigungen aktivieren"
+                            />
+                        </DialogContent>
+
+                </Dialog>
+
+                
+
             </div>
         );
 

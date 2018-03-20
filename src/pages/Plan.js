@@ -189,39 +189,45 @@ class Plan extends Component {
 
                                 {this.state.cDayVertretungenReady ?
 
-                                    this.state.cDayVertretungen.map((vertretung, index) => {
+                                    this.state.cDayVertretungen ?
 
-                                        let fa = vertretung.bemerkung.includes('f.a.');
+                                        this.state.cDayVertretungen.map((vertretung, index) => {
 
-                                        let fehltname = ''
+                                            let fa = vertretung.bemerkung.includes('f.a.');
 
-                                        if (vertretung.fehltname.includes('Herr')) {
+                                            let fehltname = ''
 
-                                            let a = vertretung.fehltname;
-                                            let b = "n";
-                                            let position = 4;
-                                            fehltname = a.substr(0, position) + b + a.substr(position);
+                                            if (vertretung.fehltname.includes('Herr')) {
 
-                                        } else {
+                                                let a = vertretung.fehltname;
+                                                let b = "n";
+                                                let position = 4;
+                                                fehltname = a.substr(0, position) + b + a.substr(position);
 
-                                            fehltname = vertretung.fehltname;
+                                            } else {
 
-                                        }
+                                                fehltname = vertretung.fehltname;
 
-                                        
-                                        let stunde = ''
+                                            }
 
-                                        if (vertretung.stunde.charAt(0) == '0') {
+                                            
+                                            let stunde = ''
 
-                                            stunde = vertretung.stunde.substr(1, 1); // Die 0 am Anfang wegkürzen
+                                            if (vertretung.stunde.charAt(0) == '0') {
 
-                                        }
+                                                stunde = vertretung.stunde.substr(1, 1); // Die 0 am Anfang wegkürzen
 
-                                        return (
-                                            <VertretungExpansionPanel key={index} stunde={stunde} fehltkuerzel={vertretung.fehltkuerzel} fehltname={fehltname} klasse={vertretung.klasse} fach={vertretung.fach} raum={vertretung.raum} vertrittkuerzel={vertretung.vertrittkuerzel} vertrittname={vertretung.vertrittname} bemerkung={vertretung.bemerkung} />
-                                        );
+                                            }
 
-                                    })
+                                            return (
+                                                <VertretungExpansionPanel key={index} stunde={stunde} fehltkuerzel={vertretung.fehltkuerzel} fehltname={fehltname} klasse={vertretung.klasse} fach={vertretung.fach} raum={vertretung.raum} vertrittkuerzel={vertretung.vertrittkuerzel} vertrittname={vertretung.vertrittname} bemerkung={vertretung.bemerkung} />
+                                            );
+
+                                        })
+
+                                        :
+
+                                        <Typography style={{ fontSize: '14pt', textAlign: 'center' }}>Keine Vertretungen für deine Stufe 😕</Typography>
 
                                     :
 
@@ -231,7 +237,7 @@ class Plan extends Component {
                                 {this.state.cDayVertretungenReady ?
                                     <Typography variant="caption" style={{ textAlign: 'center', paddingTop: 16 }}>
                                         
-                                            <CheckIcon style={{width: 16, position: 'relative', top: '6px'}} /> Aktuellste Version vom {this.state.cDayUpdatedDate.day}.{this.state.cDayUpdatedDate.month}.{this.state.cDayUpdatedDate.year} um {this.state.cDayUpdatedDate.time} Uhr
+                                            <CheckIcon style={{width: 16, position: 'relative', top: '6px'}} />&nbsp;Aktuellste Version vom {this.state.cDayUpdatedDate.day}.{this.state.cDayUpdatedDate.month}.{this.state.cDayUpdatedDate.year} um {this.state.cDayUpdatedDate.time} Uhr
                                         
                                     </Typography>
                                 : null}
@@ -297,37 +303,43 @@ class Plan extends Component {
 
                                 {this.state.nDayVertretungenReady ?
 
-                                    this.state.nDayVertretungen.map((vertretung, index) => {
+                                    this.state.nDayVertretungen ?
 
-                                        let fehltname = ''
+                                        this.state.nDayVertretungen.map((vertretung, index) => {
 
-                                        if (vertretung.fehltname.includes('Herr')) {
+                                            let fehltname = ''
 
-                                            let a = vertretung.fehltname;
-                                            let b = "n";
-                                            let position = 4;
-                                            fehltname = a.substr(0, position) + b + a.substr(position);
+                                            if (vertretung.fehltname.includes('Herr')) {
 
-                                        } else {
+                                                let a = vertretung.fehltname;
+                                                let b = "n";
+                                                let position = 4;
+                                                fehltname = a.substr(0, position) + b + a.substr(position);
 
-                                            fehltname = vertretung.fehltname;
+                                            } else {
 
-                                        }
+                                                fehltname = vertretung.fehltname;
+
+                                            }
 
 
-                                        let stunde = ''
+                                            let stunde = ''
 
-                                        if (vertretung.stunde.charAt(0) == '0') {
+                                            if (vertretung.stunde.charAt(0) == '0') {
 
-                                            stunde = vertretung.stunde.substr(1, 1); // Die 0 am Anfang wegkürzen
+                                                stunde = vertretung.stunde.substr(1, 1); // Die 0 am Anfang wegkürzen
 
-                                        }
+                                            }
 
-                                        return (
-                                            <VertretungExpansionPanel key={index} stunde={stunde} fehltkuerzel={vertretung.fehltkuerzel} fehltname={fehltname} klasse={vertretung.klasse} fach={vertretung.fach} raum={vertretung.raum} vertrittkuerzel={vertretung.vertrittkuerzel} vertrittname={vertretung.vertrittname} bemerkung={vertretung.bemerkung} />
-                                        );
+                                            return (
+                                                <VertretungExpansionPanel key={index} stunde={stunde} fehltkuerzel={vertretung.fehltkuerzel} fehltname={fehltname} klasse={vertretung.klasse} fach={vertretung.fach} raum={vertretung.raum} vertrittkuerzel={vertretung.vertrittkuerzel} vertrittname={vertretung.vertrittname} bemerkung={vertretung.bemerkung} />
+                                            );
 
-                                    })
+                                        })
+
+                                        :
+
+                                        <Typography style={{ fontSize: '14pt', textAlign: 'center' }}>Keine Vertretungen für deine Stufe 😕</Typography>
 
                                     :
 
@@ -337,7 +349,7 @@ class Plan extends Component {
                                 {this.state.nDayVertretungenReady ? 
                                     <Typography variant="caption" style={{ textAlign: 'center', paddingTop: 16 }}>
                                         
-                                        <CheckIcon style={{ width: 16, position: 'relative', top: '6px' }} />Aktuellste Version vom {this.state.nDayUpdatedDate.day}.{this.state.nDayUpdatedDate.month}.{this.state.nDayUpdatedDate.year} um {this.state.nDayUpdatedDate.time} Uhr
+                                        <CheckIcon style={{ width: 16, position: 'relative', top: '6px' }} />&nbsp;Aktuellste Version vom {this.state.nDayUpdatedDate.day}.{this.state.nDayUpdatedDate.month}.{this.state.nDayUpdatedDate.year} um {this.state.nDayUpdatedDate.time} Uhr
                                         
                                     </Typography>
                                 : null}

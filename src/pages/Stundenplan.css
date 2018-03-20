@@ -34,3 +34,16 @@ body {
     width: 120px;
 
 }
+
+.setupFaecherList {
+
+    max-height: 130px;
+    overflow-y: scroll;
+
+}
+
+.setupTextbox {
+
+    width: 100%;
+
+ }

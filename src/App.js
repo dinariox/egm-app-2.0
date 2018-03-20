@@ -117,38 +117,6 @@ class App extends Component {
 
         }
 
-        messaging.requestPermission()
-            .then(() => {
-                console.log('Notification permission granted.');
-                return messaging.getToken();
-            })
-            .then(token => {
-
-                db.ref('/tokens').orderByChild('token').equalTo(token).once('value', snapshot => {
-
-                    if (snapshot.exists()) {
-                        console.log('Token is already in the database');
-                        return;
-                    }
-
-                    db.ref('/tokens').push({
-
-                        token: token
-
-                    }).then(() => {
-                        console.log('Token uploaded to database', token);
-                    }).catch((error) => {
-                        console.error('Token upload failed', error);
-                    });
-
-                });
-
-
-            })
-            .catch(err => {
-                console.log('FCM Error:', err);
-            });
-
 
         messaging.onTokenRefresh(() => {
 
@@ -168,7 +136,7 @@ class App extends Component {
                         token: token
 
                     }).then(() => {
-                        console.log('Token uploaded to database', token);
+                        console.log('Updated token uploaded to database', token);
                     }).catch((error) => {
                         console.error('Token upload failed', error);
                     });

@@ -41,8 +41,6 @@ class WelcomeCard extends Component {
 
             db.ref('willkommenstexte').once('value', snapshot => {
 
-                console.log(userInfo.firstname)
-
                 let messages = snapshot.val();
                 let sortedMessages = [];
 
