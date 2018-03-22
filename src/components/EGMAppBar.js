@@ -37,7 +37,7 @@ import CloseIcon from 'material-ui-icons/Close';
 // import NotificationsActiveIcon from 'material-ui-icons/NotificationsActive';
 
 import personImg from './../img/person.jpg';
-import cardImage from './../img/polyMenuBackground.jpg';
+import cardImage from './../img/polyMenuBackgroundBlue.jpg';
 
 // Firebase References
 import firebase from './../firebase';

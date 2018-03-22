@@ -37,7 +37,6 @@ body {
 
 .setupFaecherList {
 
-    max-height: 130px;
     overflow-y: scroll;
 
 }
