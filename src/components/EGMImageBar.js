@@ -41,7 +41,7 @@ class EGMImageBar extends Component {
         return (
             <Paper elevation={4}>
                 <div style={this.state.style.rootImage}>
-                    <EGMAppBar title={this.props.title} imageMode={true}></EGMAppBar>
+                    <EGMAppBar ref="appBar" title={this.props.title} imageMode={true}></EGMAppBar>
                     { !this.props.sharens ?
 
                         <Typography variant="title" className="dateDisplay">

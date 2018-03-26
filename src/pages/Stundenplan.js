@@ -45,6 +45,10 @@ import PrevIcon from 'material-ui-icons/NavigateBefore';
 import NextIcon from 'material-ui-icons/NavigateNext';
 
 
+// Swipeable
+import Swipeable from 'react-swipeable';
+
+
 // Own components
 import EGMAppBar from './../components/EGMAppBar';
 
@@ -735,6 +739,27 @@ class Stundenplan extends Component {
     }
 
 
+    swipedRight(e, deltaX, isFlick) {
+
+        if (deltaX <= -50 && isFlick) {
+
+            this.refs.appBar.refs.menuDrawerLeft.openDrawerLeft();
+
+        }
+
+    }
+
+    swipedLeft(e, deltaX, isFlick) {
+
+        if (deltaX >= 50 && isFlick) {
+
+            this.refs.appBar.refs.menuDrawerLeft.closeDrawerLeft();
+
+        }
+
+    }
+
+
     render() {
 
         let { montag, dienstag, mittwoch, donnerstag, freitag } = this.state;
@@ -743,11 +768,14 @@ class Stundenplan extends Component {
 
             <MuiThemeProvider theme={theme}>
 
-                <div style={{ backgroundColor: '#fbfbfb', minHeight: '100vh' }}>
+                <Swipeable
+                    onSwipedRight={(e, deltaX, isFlick) => this.swipedRight(e, deltaX, isFlick)}
+                    onSwipedLeft={(e, deltaX, isFlick) => this.swipedLeft(e, deltaX, isFlick)}
+                    style={{ backgroundColor: '#fbfbfb', minHeight: '100vh' }}>
 
                     <CssBaseline />
 
-                    <EGMAppBar title={this.state.activeView === 'editStunden' ? 'Stundenplan bearbeiten' : this.state.pageTitle} stundenplan stundenplanView={this.state.activeView} stundenplanChangeView={(changeTo) => this.setState({ activeView: changeTo })} />
+                    <EGMAppBar ref="appBar" title={this.state.activeView === 'editStunden' ? 'Stundenplan bearbeiten' : this.state.pageTitle} stundenplan stundenplanView={this.state.activeView} stundenplanChangeView={(changeTo) => this.setState({ activeView: changeTo })} />
 
                     <div className="appBarSpacer"></div>
 
@@ -1433,7 +1461,7 @@ class Stundenplan extends Component {
                     </Dialog>
 
 
-                </div>
+                </Swipeable>
 
 
             </MuiThemeProvider>

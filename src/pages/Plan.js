@@ -27,6 +27,11 @@ import NDayIcon from 'material-ui-icons/Event';
 
 import CheckIcon from 'material-ui-icons/Check';
 
+
+// Swipeable
+import Swipeable from 'react-swipeable';
+
+
 // Own Components
 import EGMAppBar from './../components/EGMAppBar';
 import VertretungExpansionPanel from './../components/VertretungExpansionPanel';
@@ -159,6 +164,27 @@ class Plan extends Component {
     }
 
 
+    swipedRight(e, deltaX, isFlick) {
+
+        if (deltaX <= -50 && isFlick) {
+
+            this.refs.appBar.refs.menuDrawerLeft.openDrawerLeft();
+
+        }
+
+    }
+
+    swipedLeft(e, deltaX, isFlick) {
+
+        if (deltaX >= 50 && isFlick) {
+
+            this.refs.appBar.refs.menuDrawerLeft.closeDrawerLeft();
+
+        }
+
+    }
+
+
     render() {
 
         return (
@@ -166,247 +192,252 @@ class Plan extends Component {
 
             <MuiThemeProvider theme={theme}>
 
-                <CssBaseline />
+                <Swipeable
+                    onSwipedRight={(e, deltaX, isFlick) => this.swipedRight(e, deltaX, isFlick)}
+                    onSwipedLeft={(e, deltaX, isFlick) => this.swipedLeft(e, deltaX, isFlick)}>
 
-                <EGMAppBar title={this.state.pageTitle} />
+                    <CssBaseline />
 
-                <div className="appBarSpacer"></div>
+                    <EGMAppBar ref="appBar" title={this.state.pageTitle} />
 
-                {/* CDAY */}
-                <Grow in={this.state.growC} mountOnEnter unmountOnExit>
-                    <div>
-                        <Card style={{ marginBottom: 8, minHeight: 160 }}>
-                            <CardContent style={{ paddingBottom: 16 }}>
+                    <div className="appBarSpacer"></div>
 
-                                <Typography variant="headline" style={{ textAlign: 'center' }}>
-                                    Vertretungen
-                            </Typography>
+                    {/* CDAY */}
+                    <Grow in={this.state.growC} mountOnEnter unmountOnExit>
+                        <div>
+                            <Card style={{ marginBottom: 8, minHeight: 160 }}>
+                                <CardContent style={{ paddingBottom: 16 }}>
 
-                                <Typography variant="body1" style={{ textAlign: 'center', paddingBottom: 10 }}>
-                                    {this.state.cDayVertretungenReady ? `für ${this.state.cDayForDate.dayOfWeek}, den ${this.state.cDayForDate.day}. ${this.state.cDayForDateMonthName}` : ''}
+                                    <Typography variant="headline" style={{ textAlign: 'center' }}>
+                                        Vertretungen
                                 </Typography>
 
+                                    <Typography variant="body1" style={{ textAlign: 'center', paddingBottom: 10 }}>
+                                        {this.state.cDayVertretungenReady ? `für ${this.state.cDayForDate.dayOfWeek}, den ${this.state.cDayForDate.day}. ${this.state.cDayForDateMonthName}` : ''}
+                                    </Typography>
 
-                                {this.state.cDayVertretungenReady ?
 
-                                    this.state.cDayVertretungen ?
+                                    {this.state.cDayVertretungenReady ?
 
-                                        this.state.cDayVertretungen.map((vertretung, index) => {
+                                        this.state.cDayVertretungen ?
 
-                                            let fa = vertretung.bemerkung.includes('f.a.');
+                                            this.state.cDayVertretungen.map((vertretung, index) => {
 
-                                            let fehltname = ''
+                                                let fa = vertretung.bemerkung.includes('f.a.');
 
-                                            if (vertretung.fehltname.includes('Herr')) {
+                                                let fehltname = ''
 
-                                                let a = vertretung.fehltname;
-                                                let b = "n";
-                                                let position = 4;
-                                                fehltname = a.substr(0, position) + b + a.substr(position);
+                                                if (vertretung.fehltname.includes('Herr')) {
 
-                                            } else {
+                                                    let a = vertretung.fehltname;
+                                                    let b = "n";
+                                                    let position = 4;
+                                                    fehltname = a.substr(0, position) + b + a.substr(position);
 
-                                                fehltname = vertretung.fehltname;
+                                                } else {
 
-                                            }
+                                                    fehltname = vertretung.fehltname;
 
+                                                }
+
+                                                
+                                                let stunde = ''
+
+                                                if (vertretung.stunde.charAt(0) == '0') {
+
+                                                    stunde = vertretung.stunde.substr(1, 1); // Die 0 am Anfang wegkürzen
+
+                                                }
+
+                                                return (
+                                                    <VertretungExpansionPanel key={index} stunde={stunde} fehltkuerzel={vertretung.fehltkuerzel} fehltname={fehltname} klasse={vertretung.klasse} fach={vertretung.fach} raum={vertretung.raum} vertrittkuerzel={vertretung.vertrittkuerzel} vertrittname={vertretung.vertrittname} bemerkung={vertretung.bemerkung} />
+                                                );
+
+                                            })
+
+                                            :
+
+                                            <Typography style={{ fontSize: '14pt', textAlign: 'center' }}>Keine Vertretungen für deine Stufe 😕</Typography>
+
+                                        :
+
+                                        <CircularProgress className="vertretungenLoadingCircle" />
+
+                                    }
+                                    {this.state.cDayVertretungenReady ?
+                                        <Typography variant="caption" style={{ textAlign: 'center', paddingTop: 16 }}>
                                             
-                                            let stunde = ''
-
-                                            if (vertretung.stunde.charAt(0) == '0') {
-
-                                                stunde = vertretung.stunde.substr(1, 1); // Die 0 am Anfang wegkürzen
-
-                                            }
-
-                                            return (
-                                                <VertretungExpansionPanel key={index} stunde={stunde} fehltkuerzel={vertretung.fehltkuerzel} fehltname={fehltname} klasse={vertretung.klasse} fach={vertretung.fach} raum={vertretung.raum} vertrittkuerzel={vertretung.vertrittkuerzel} vertrittname={vertretung.vertrittname} bemerkung={vertretung.bemerkung} />
-                                            );
-
-                                        })
-
-                                        :
-
-                                        <Typography style={{ fontSize: '14pt', textAlign: 'center' }}>Keine Vertretungen für deine Stufe 😕</Typography>
-
-                                    :
-
-                                    <CircularProgress className="vertretungenLoadingCircle" />
-
-                                }
-                                {this.state.cDayVertretungenReady ?
-                                    <Typography variant="caption" style={{ textAlign: 'center', paddingTop: 16 }}>
-                                        
-                                            <CheckIcon style={{width: 16, position: 'relative', top: '6px'}} />&nbsp;Aktuellste Version vom {this.state.cDayUpdatedDate.day}.{this.state.cDayUpdatedDate.month}.{this.state.cDayUpdatedDate.year} um {this.state.cDayUpdatedDate.time} Uhr
-                                        
-                                    </Typography>
-                                : null}
+                                                <CheckIcon style={{width: 16, position: 'relative', top: '6px'}} />&nbsp;Aktuellste Version vom {this.state.cDayUpdatedDate.day}.{this.state.cDayUpdatedDate.month}.{this.state.cDayUpdatedDate.year} um {this.state.cDayUpdatedDate.time} Uhr
+                                            
+                                        </Typography>
+                                    : null}
 
 
-                            </CardContent>
+                                </CardContent>
 
-                        </Card>
+                            </Card>
 
-                        <Card style={{ minHeight: 160 }}>
-                            <CardContent>
+                            <Card style={{ minHeight: 160 }}>
+                                <CardContent>
 
-                                <Typography variant="headline" style={{ textAlign: 'center' }}>
-                                    Abwesende Lehrer
-                            </Typography>
-
-                            </CardContent>
-
-
-                            {this.state.cDayAbwesendeLehrerReady ?
-                                <List style={{ animation: 'fade-in 0.5s forwards' }}>
-
-                                    {this.state.cDayAbwesendeLehrer.map((lehrer, index) => {
-
-                                        return (
-                                            <ListItem key={lehrer.kuerzel + index}>
-                                                <Avatar style={{ fontSize: '11pt', borderStyle: 'solid', borderWidth: 2, backgroundColor: 'transparent', color: '#333', borderColor: '#EF5350' }}>
-                                                    {lehrer.kuerzel}
-                                                </Avatar>
-                                                <ListItemText primary={lehrer.name} secondary={'Fehlt von der ' + lehrer.start + '. bis zur ' + lehrer.ende + '. Stunde.'} />
-                                            </ListItem>
-                                        );
-
-                                    })}
-
-                                </List>
-
-                                :
-
-                                <CircularProgress className="abwesendeLehrerLoadingCircle" />
-
-                            }
-
-
-                        </Card>
-                    </div>
-                </Grow>
-
-                {/* NDAY */}
-                <Grow in={this.state.growN} mountOnEnter unmountOnExit {...(this.state.growN ? { timeout: 1000 } : {})}>
-                    <div>
-                        <Card style={{ marginBottom: 8, minHeight: 160 }}>
-                            <CardContent style={{ paddingBottom: 16 }}>
-
-                                <Typography variant="headline" style={{ textAlign: 'center' }}>
-                                    Vertretungen
-                            </Typography>
-
-                                <Typography variant="body1" style={{ textAlign: 'center', paddingBottom: 10 }}>
-                                    {this.state.nDayVertretungenReady ? `für ${this.state.nDayForDate.dayOfWeek}, den ${this.state.nDayForDate.day}. ${this.state.nDayForDateMonthName}` : ''}
+                                    <Typography variant="headline" style={{ textAlign: 'center' }}>
+                                        Abwesende Lehrer
                                 </Typography>
 
-
-                                {this.state.nDayVertretungenReady ?
-
-                                    this.state.nDayVertretungen ?
-
-                                        this.state.nDayVertretungen.map((vertretung, index) => {
-
-                                            let fehltname = ''
-
-                                            if (vertretung.fehltname.includes('Herr')) {
-
-                                                let a = vertretung.fehltname;
-                                                let b = "n";
-                                                let position = 4;
-                                                fehltname = a.substr(0, position) + b + a.substr(position);
-
-                                            } else {
-
-                                                fehltname = vertretung.fehltname;
-
-                                            }
+                                </CardContent>
 
 
-                                            let stunde = ''
+                                {this.state.cDayAbwesendeLehrerReady ?
+                                    <List style={{ animation: 'fade-in 0.5s forwards' }}>
 
-                                            if (vertretung.stunde.charAt(0) == '0') {
-
-                                                stunde = vertretung.stunde.substr(1, 1); // Die 0 am Anfang wegkürzen
-
-                                            }
+                                        {this.state.cDayAbwesendeLehrer.map((lehrer, index) => {
 
                                             return (
-                                                <VertretungExpansionPanel key={index} stunde={stunde} fehltkuerzel={vertretung.fehltkuerzel} fehltname={fehltname} klasse={vertretung.klasse} fach={vertretung.fach} raum={vertretung.raum} vertrittkuerzel={vertretung.vertrittkuerzel} vertrittname={vertretung.vertrittname} bemerkung={vertretung.bemerkung} />
+                                                <ListItem key={lehrer.kuerzel + index}>
+                                                    <Avatar style={{ fontSize: '11pt', borderStyle: 'solid', borderWidth: 2, backgroundColor: 'transparent', color: '#333', borderColor: '#EF5350' }}>
+                                                        {lehrer.kuerzel}
+                                                    </Avatar>
+                                                    <ListItemText primary={lehrer.name} secondary={'Fehlt von der ' + lehrer.start + '. bis zur ' + lehrer.ende + '. Stunde.'} />
+                                                </ListItem>
                                             );
 
-                                        })
+                                        })}
 
-                                        :
-
-                                        <Typography style={{ fontSize: '14pt', textAlign: 'center' }}>Keine Vertretungen für deine Stufe 😕</Typography>
+                                    </List>
 
                                     :
 
-                                    <CircularProgress className="vertretungenLoadingCircle" />
+                                    <CircularProgress className="abwesendeLehrerLoadingCircle" />
 
                                 }
-                                {this.state.nDayVertretungenReady ? 
-                                    <Typography variant="caption" style={{ textAlign: 'center', paddingTop: 16 }}>
-                                        
-                                        <CheckIcon style={{ width: 16, position: 'relative', top: '6px' }} />&nbsp;Aktuellste Version vom {this.state.nDayUpdatedDate.day}.{this.state.nDayUpdatedDate.month}.{this.state.nDayUpdatedDate.year} um {this.state.nDayUpdatedDate.time} Uhr
-                                        
+
+
+                            </Card>
+                        </div>
+                    </Grow>
+
+                    {/* NDAY */}
+                    <Grow in={this.state.growN} mountOnEnter unmountOnExit {...(this.state.growN ? { timeout: 1000 } : {})}>
+                        <div>
+                            <Card style={{ marginBottom: 8, minHeight: 160 }}>
+                                <CardContent style={{ paddingBottom: 16 }}>
+
+                                    <Typography variant="headline" style={{ textAlign: 'center' }}>
+                                        Vertretungen
+                                </Typography>
+
+                                    <Typography variant="body1" style={{ textAlign: 'center', paddingBottom: 10 }}>
+                                        {this.state.nDayVertretungenReady ? `für ${this.state.nDayForDate.dayOfWeek}, den ${this.state.nDayForDate.day}. ${this.state.nDayForDateMonthName}` : ''}
                                     </Typography>
-                                : null}
 
 
-                            </CardContent>
+                                    {this.state.nDayVertretungenReady ?
 
-                        </Card>
+                                        this.state.nDayVertretungen ?
 
-                        <Card style={{ minHeight: 160 }}>
-                            <CardContent>
+                                            this.state.nDayVertretungen.map((vertretung, index) => {
 
-                                <Typography variant="headline" style={{ textAlign: 'center' }}>
-                                    Abwesende Lehrer
-                            </Typography>
+                                                let fehltname = ''
 
-                            </CardContent>
+                                                if (vertretung.fehltname.includes('Herr')) {
 
+                                                    let a = vertretung.fehltname;
+                                                    let b = "n";
+                                                    let position = 4;
+                                                    fehltname = a.substr(0, position) + b + a.substr(position);
 
-                            {this.state.nDayAbwesendeLehrerReady ?
-                                <List style={{ animation: 'fade-in 0.5s forwards' }}>
+                                                } else {
 
-                                    {this.state.nDayAbwesendeLehrer.map((lehrer, index) => {
+                                                    fehltname = vertretung.fehltname;
 
-                                        return (
-                                            <ListItem key={lehrer.kuerzel + index}>
-                                                <Avatar style={{ fontSize: '11pt', borderStyle: 'solid', borderWidth: 2, backgroundColor: 'transparent', color: '#333', borderColor: '#EF5350' }}>
-                                                    {lehrer.kuerzel}
-                                                </Avatar>
-                                                <ListItemText primary={lehrer.name} secondary={'Fehlt von der ' + lehrer.start + '. bis zur ' + lehrer.ende + '. Stunde.'} />
-                                            </ListItem>
-                                        );
-
-                                    })}
-
-                                </List>
-
-                                :
-
-                                <CircularProgress className="abwesendeLehrerLoadingCircle" />
-
-                            }
+                                                }
 
 
-                        </Card>
-                    </div>
-                </Grow>
+                                                let stunde = ''
 
-                <div className="bottomNavigationSpacer"></div>
+                                                if (vertretung.stunde.charAt(0) == '0') {
 
-                <Paper elevation={7} style={{ position: 'fixed', width: '100%', bottom: 0}}>
-                    <BottomNavigation value={this.state.modeValue} showLabels>
-                        <BottomNavigationAction label={this.state.cDayForDate.day + '. ' + this.state.cDayForDateMonthName} icon={<CDayIcon />} onClick={() => { this.setState({ modeValue: 0, growC: true, growN: false }) }} />
-                        <BottomNavigationAction label={this.state.nDayForDate.day + '. ' + this.state.nDayForDateMonthName} icon={<NDayIcon />} onClick={() => { this.setState({ modeValue: 1, growC: false, growN: true }) }} />
-                    </BottomNavigation>
-                </Paper>
+                                                    stunde = vertretung.stunde.substr(1, 1); // Die 0 am Anfang wegkürzen
+
+                                                }
+
+                                                return (
+                                                    <VertretungExpansionPanel key={index} stunde={stunde} fehltkuerzel={vertretung.fehltkuerzel} fehltname={fehltname} klasse={vertretung.klasse} fach={vertretung.fach} raum={vertretung.raum} vertrittkuerzel={vertretung.vertrittkuerzel} vertrittname={vertretung.vertrittname} bemerkung={vertretung.bemerkung} />
+                                                );
+
+                                            })
+
+                                            :
+
+                                            <Typography style={{ fontSize: '14pt', textAlign: 'center' }}>Keine Vertretungen für deine Stufe 😕</Typography>
+
+                                        :
+
+                                        <CircularProgress className="vertretungenLoadingCircle" />
+
+                                    }
+                                    {this.state.nDayVertretungenReady ? 
+                                        <Typography variant="caption" style={{ textAlign: 'center', paddingTop: 16 }}>
+                                            
+                                            <CheckIcon style={{ width: 16, position: 'relative', top: '6px' }} />&nbsp;Aktuellste Version vom {this.state.nDayUpdatedDate.day}.{this.state.nDayUpdatedDate.month}.{this.state.nDayUpdatedDate.year} um {this.state.nDayUpdatedDate.time} Uhr
+                                            
+                                        </Typography>
+                                    : null}
+
+
+                                </CardContent>
+
+                            </Card>
+
+                            <Card style={{ minHeight: 160 }}>
+                                <CardContent>
+
+                                    <Typography variant="headline" style={{ textAlign: 'center' }}>
+                                        Abwesende Lehrer
+                                </Typography>
+
+                                </CardContent>
+
+
+                                {this.state.nDayAbwesendeLehrerReady ?
+                                    <List style={{ animation: 'fade-in 0.5s forwards' }}>
+
+                                        {this.state.nDayAbwesendeLehrer.map((lehrer, index) => {
+
+                                            return (
+                                                <ListItem key={lehrer.kuerzel + index}>
+                                                    <Avatar style={{ fontSize: '11pt', borderStyle: 'solid', borderWidth: 2, backgroundColor: 'transparent', color: '#333', borderColor: '#EF5350' }}>
+                                                        {lehrer.kuerzel}
+                                                    </Avatar>
+                                                    <ListItemText primary={lehrer.name} secondary={'Fehlt von der ' + lehrer.start + '. bis zur ' + lehrer.ende + '. Stunde.'} />
+                                                </ListItem>
+                                            );
+
+                                        })}
+
+                                    </List>
+
+                                    :
+
+                                    <CircularProgress className="abwesendeLehrerLoadingCircle" />
+
+                                }
+
+
+                            </Card>
+                        </div>
+                    </Grow>
+
+                    <div className="bottomNavigationSpacer"></div>
+
+                    <Paper elevation={7} style={{ position: 'fixed', width: '100%', bottom: 0}}>
+                        <BottomNavigation value={this.state.modeValue} showLabels>
+                            <BottomNavigationAction label={this.state.cDayForDate.day + '. ' + this.state.cDayForDateMonthName} icon={<CDayIcon />} onClick={() => { this.setState({ modeValue: 0, growC: true, growN: false }) }} />
+                            <BottomNavigationAction label={this.state.nDayForDate.day + '. ' + this.state.nDayForDateMonthName} icon={<NDayIcon />} onClick={() => { this.setState({ modeValue: 1, growC: false, growN: true }) }} />
+                        </BottomNavigation>
+                    </Paper>
                     
+                </Swipeable>
 
             </MuiThemeProvider>
 

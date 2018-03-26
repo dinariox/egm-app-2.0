@@ -14,6 +14,9 @@ import theme from './../theme';
 // MUI Components
 
 
+// Swipeable
+import Swipeable from 'react-swipeable';
+
 // Own components
 import EGMImageBar from './../components/EGMImageBar';
 import WelcomeCard from './../components/WelcomeCard';
@@ -86,6 +89,26 @@ class Home extends Component {
 
     }
 
+    swipedRight(e, deltaX, isFlick) {
+        
+        if (deltaX <= -50 && isFlick) {
+
+            this.refs.appBar.refs.appBar.refs.menuDrawerLeft.openDrawerLeft();
+
+        }
+
+    }
+
+    swipedLeft(e, deltaX, isFlick) {
+
+        if (deltaX >= 50 && isFlick) {
+
+            this.refs.appBar.refs.appBar.refs.menuDrawerLeft.closeDrawerLeft();
+
+        }
+
+    }
+
 
 
     render() {
@@ -93,11 +116,14 @@ class Home extends Component {
 
             <MuiThemeProvider theme={theme}>
 
-            <div style={{ backgroundColor: '#fbfbfb', minHeight: '100vh'}}>
+            <Swipeable
+                onSwipedRight={(e, deltaX, isFlick) => this.swipedRight(e, deltaX, isFlick)}
+                onSwipedLeft={(e, deltaX, isFlick) => this.swipedLeft(e, deltaX, isFlick)}
+                style={{ backgroundColor: '#fbfbfb', minHeight: '100vh'}}>
 
                 <CssBaseline />
 
-                <EGMImageBar title={this.state.pageTitle} date={this.state.currentDate} />
+                <EGMImageBar ref="appBar" title={this.state.pageTitle} date={this.state.currentDate} />
                 
                 <WelcomeCard />
     
@@ -111,7 +137,7 @@ class Home extends Component {
 
                 </div>
 
-            </div>
+            </Swipeable>
 
 
             </MuiThemeProvider>

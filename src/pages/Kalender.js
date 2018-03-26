@@ -22,6 +22,9 @@ import MenuIcon from 'material-ui-icons/MoreVert';
 import NotificationsIcon from 'material-ui-icons/Notifications';
 import StarIcon from 'material-ui-icons/Star';
 
+// Swipeable
+import Swipeable from 'react-swipeable';
+
 // Own components
 import EGMAppBar from './../components/EGMAppBar';
 
@@ -126,6 +129,27 @@ class Home extends Component {
     }
 
 
+    swipedRight(e, deltaX, isFlick) {
+
+        if (deltaX <= -50 && isFlick) {
+
+            this.refs.appBar.refs.menuDrawerLeft.openDrawerLeft();
+
+        }
+
+    }
+
+    swipedLeft(e, deltaX, isFlick) {
+
+        if (deltaX >= 50 && isFlick) {
+
+            this.refs.appBar.refs.menuDrawerLeft.closeDrawerLeft();
+
+        }
+
+    }
+
+
     handleClick = event => {
 
         this.setState({ anchorEl: event.currentTarget });
@@ -145,9 +169,13 @@ class Home extends Component {
 
             <MuiThemeProvider theme={theme}>
 
+                <Swipeable
+                    onSwipedRight={(e, deltaX, isFlick) => this.swipedRight(e, deltaX, isFlick)}
+                    onSwipedLeft={(e, deltaX, isFlick) => this.swipedLeft(e, deltaX, isFlick)}>
+
                     <CssBaseline />
 
-                    <EGMAppBar title={this.state.pageTitle} />
+                    <EGMAppBar ref="appBar" title={this.state.pageTitle} />
 
                     <div className="appBarSpacer"></div>
 
@@ -197,6 +225,8 @@ class Home extends Component {
                             <ListItemText style={{ marginLeft: -16 }} inset primary="Markieren" />
                         </MenuItem>
                     </Menu>
+
+                </Swipeable>
 
             </MuiThemeProvider>
 

@@ -13,6 +13,10 @@ import theme from './../../theme';
 // MUI Components
 
 
+// Swipeable
+import Swipeable from 'react-swipeable';
+
+
 // Own Components
 import EGMAppBar from './../../components/EGMAppBar';
 import FullArticlesCard from './../../components/FullArticlesCard';
@@ -42,6 +46,26 @@ class News extends Component {
 
     }
 
+    swipedRight(e, deltaX, isFlick) {
+
+        if (deltaX <= -50 && isFlick) {
+
+            this.refs.appBar.refs.menuDrawerLeft.openDrawerLeft();
+
+        }
+
+    }
+
+    swipedLeft(e, deltaX, isFlick) {
+
+        if (deltaX >= 50 && isFlick) {
+
+            this.refs.appBar.refs.menuDrawerLeft.closeDrawerLeft();
+
+        }
+
+    }
+
     render() {
 
         return (
@@ -49,17 +73,20 @@ class News extends Component {
 
             <MuiThemeProvider theme={theme}>
 
-            <div style={{ backgroundColor: '#fbfbfb', minHeight: '100vh' }}>
+                <Swipeable
+                    onSwipedRight={(e, deltaX, isFlick) => this.swipedRight(e, deltaX, isFlick)}
+                    onSwipedLeft={(e, deltaX, isFlick) => this.swipedLeft(e, deltaX, isFlick)}
+                    style={{ backgroundColor: '#fbfbfb', minHeight: '100vh' }}>
 
-                <EGMAppBar title={this.state.pageTitle} />
-                <div className="appBarSpacer"></div>
+                    <EGMAppBar ref="appBar" title={this.state.pageTitle} />
+                    <div className="appBarSpacer"></div>
 
-                    <FullArticlesCard heading={this.state.cardHeading} mode={this.state.mode} loadColor="#4CAF50" />
+                        <FullArticlesCard heading={this.state.cardHeading} mode={this.state.mode} loadColor="#4CAF50" />
 
-                <div className="bottomNavigationSpacer"></div>
-                <ArchivNavigation value={this.state.value} history={this.props.history} />
+                    <div className="bottomNavigationSpacer"></div>
+                    <ArchivNavigation value={this.state.value} history={this.props.history} />
 
-            </div>
+                </Swipeable>
 
             </MuiThemeProvider>
 

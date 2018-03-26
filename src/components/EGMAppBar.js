@@ -178,7 +178,7 @@ class EGMAppBar extends Component {
             <div className="root">
                 <AppBar position="fixed" style={{ background: this.props.stundenplanView === 'editStunden' || this.props.stundenplanView === 'settings'  ? '#EF5350' : this.state.background, boxShadow: this.state.shadow, transition: this.props.imageMode ? this.state.transition : 'background 200ms' }}>
                     <Toolbar>
-                        <MenuDrawerLeft />
+                        <MenuDrawerLeft ref="menuDrawerLeft" />
                         <Typography variant="title" color="inherit" className="flex" style={this.state.transparent ? { opacity: 0, transition: 'opacity 200ms' } : { opacity: 1, transition: 'opacity 200ms'} }>
                             {
                                 this.state.transparent ?
@@ -388,6 +388,14 @@ class MenuDrawerLeft extends Component {
         });
     };
 
+    openDrawerLeft = () => {
+        this.setState({ left: true });
+    }
+
+    closeDrawerLeft = () => {
+        this.setState({ left: false });
+    }
+
   render() {
 
 
@@ -435,7 +443,7 @@ class MenuDrawerLeft extends Component {
                     </ListItemIcon>
                     <ListItemText primary="Sharens" />
                 </ListItem>
-                <ListItem button>
+                <ListItem button component={Link} to="/mensa">
                     <ListItemIcon>
                         <MensaIcon />
                     </ListItemIcon>
