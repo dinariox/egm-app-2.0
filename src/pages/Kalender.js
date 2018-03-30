@@ -22,8 +22,6 @@ import MenuIcon from 'material-ui-icons/MoreVert';
 import NotificationsIcon from 'material-ui-icons/Notifications';
 import StarIcon from 'material-ui-icons/Star';
 
-// Swipeable
-import Swipeable from 'react-swipeable';
 
 // Own components
 import EGMAppBar from './../components/EGMAppBar';
@@ -129,27 +127,6 @@ class Home extends Component {
     }
 
 
-    swipedRight(e, deltaX, isFlick) {
-
-        if (deltaX <= -50 && isFlick) {
-
-            this.refs.appBar.refs.menuDrawerLeft.openDrawerLeft();
-
-        }
-
-    }
-
-    swipedLeft(e, deltaX, isFlick) {
-
-        if (deltaX >= 50 && isFlick) {
-
-            this.refs.appBar.refs.menuDrawerLeft.closeDrawerLeft();
-
-        }
-
-    }
-
-
     handleClick = event => {
 
         this.setState({ anchorEl: event.currentTarget });
@@ -169,9 +146,7 @@ class Home extends Component {
 
             <MuiThemeProvider theme={theme}>
 
-                <Swipeable
-                    onSwipedRight={(e, deltaX, isFlick) => this.swipedRight(e, deltaX, isFlick)}
-                    onSwipedLeft={(e, deltaX, isFlick) => this.swipedLeft(e, deltaX, isFlick)}>
+                <div>
 
                     <CssBaseline />
 
@@ -226,7 +201,7 @@ class Home extends Component {
                         </MenuItem>
                     </Menu>
 
-                </Swipeable>
+                </div>
 
             </MuiThemeProvider>
 

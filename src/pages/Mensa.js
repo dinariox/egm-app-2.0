@@ -14,22 +14,19 @@ import theme from './../theme';
 import Button from 'material-ui/Button';
 import Typography from 'material-ui/Typography';
 import CssBaseline from 'material-ui/CssBaseline';
-import Card, { CardContent } from 'material-ui/Card';
+import Card, { CardContent, CardActions } from 'material-ui/Card';
 import List, { ListItem, ListItemText } from 'material-ui/List';
 import Avatar from 'material-ui/Avatar';
 import { CircularProgress } from 'material-ui/Progress';
 import Paper from 'material-ui/Paper';
 import BottomNavigation, { BottomNavigationAction } from 'material-ui/BottomNavigation';
 import Grow from 'material-ui/transitions/Grow';
+import Grid from 'material-ui/Grid';
 
 import CDayIcon from 'material-ui-icons/Today';
 import NDayIcon from 'material-ui-icons/Event';
 
 import CheckIcon from 'material-ui-icons/Check';
-
-
-// Swipeable
-import Swipeable from 'react-swipeable';
 
 
 // Own Components
@@ -72,36 +69,24 @@ class Mensa extends Component {
 
     }
 
-    swipedRight(e, deltaX, isFlick) {
-
-        if (deltaX <= -50 && isFlick) {
-
-            this.refs.appBar.refs.menuDrawerLeft.openDrawerLeft();
-
-        }
-
-    }
-
-    swipedLeft(e, deltaX, isFlick) {
-
-        if (deltaX >= 50 && isFlick) {
-
-            this.refs.appBar.refs.menuDrawerLeft.closeDrawerLeft();
-
-        }
-
-    }
 
     render() {
+
+        let paddingGrid;
+
+        if (document.documentElement.clientWidth > 960) {
+            paddingGrid = { padding: 16 };
+        }
+        else {
+            paddingGrid = {};
+        }
 
         return (
 
 
             <MuiThemeProvider theme={theme}>
 
-                <Swipeable
-                    onSwipedRight={(e, deltaX, isFlick) => this.swipedRight(e, deltaX, isFlick)}
-                    onSwipedLeft={(e, deltaX, isFlick) => this.swipedLeft(e, deltaX, isFlick)}>
+                <div>
 
                     <CssBaseline />
 
@@ -111,38 +96,65 @@ class Mensa extends Component {
 
                     { this.state.modeValue === 0 ?
 
-                        <div>
+                        <Grid container spacing={16} style={paddingGrid}>
 
-                            <Typography variant="title" style={{ padding: 16 }}>Alles rund um unsere Schulmensa</Typography>
+                            <Grid item xs={12} md={6}>
 
-                            <Typography paragraph style={{ paddingLeft: 16, paddingRight: 16, lineHeight: 1.5 }}>
-                                In unserer Schulmensa findest du jede Mittagspause ein gesundes und abwechslungsreiches Mittagessen. Seit 2010 ist sie mit ihren vielen verschiedenen Verwendungszwecken und ihrer modernen Ausstattung eines der Herzstücke unserer Schule geworden.<br />
-                                In diesem Menü kannst du dir das Essens-Angebot der nächsten oder aktuellen Woche ansehen oder mit einem Klick dein Mensa-Konto bzw. Abo verwalten. Guten Appetit!
-                            </Typography>
+                                <Card style={{ width: '100%' }}>
+                                    <CardContent style={{ paddingLeft: 24, paddingRight: 24 }}>
+                                        <Typography gutterBottom variant="headline" component="h2">
+                                            Alles rund um unsere Schulmensa
+                                        </Typography>
+                                        <Typography component="p">
+                                            In unserer Schulmensa findest du jede Mittagspause ein gesundes und abwechslungsreiches Mittagessen. Seit 2010 ist sie mit ihren vielen verschiedenen Verwendungszwecken und ihrer modernen Ausstattung eines der Herzstücke unserer Schule geworden.<br />
+                                            In diesem Menü kannst du dir das Essens-Angebot der nächsten oder aktuellen Woche ansehen oder mit einem Klick dein Mensa-Konto bzw. Abo verwalten. Guten Appetit!
+                                        </Typography>
+                                        <Typography variant="caption" style={{ color: '#777', marginTop: 8 }}>
+                                            Beachte bitte die Mensanummer unserer Schule: <b>597 1344</b>
+                                        </Typography>
+                                    </CardContent>
+                                    <CardActions style={{ paddingLeft: 12, paddingRight: 12 }}>
+                                        <Button size="small" color="primary" href="https://wegener2.securerwsoft.de/clickmeniw/clickmen.dll/" target="_blank">Mensa-Konto</Button>
+                                    </CardActions>
+                                </Card>
 
-                            <Typography variant="caption" paragraph style={{ paddingLeft: 16, paddingRight: 16 }}>
-                                Beachte bitte die Mensanummer unserer Schule: <b>597 1344</b>
-                            </Typography>
+                            </Grid>
 
-                            <Button variant="raised" href="https://wegener2.securerwsoft.de/clickmeniw/clickmen.dll/" target="_blank" style={{ position: 'relative', left: '50%', transform: 'translateX(-50%)', marginBottom: 32, backgroundColor: '#4CAF50', color: 'white' }}>Mensa-Konto</Button>
+                            <Grid item xs={12} md={6}>
 
-                            <Typography variant="title" style={{ padding: 16 }}>Der Mensa-Verein</Typography>
+                                <Card style={{ width: '100%' }}>
+                                    <CardContent style={{ paddingLeft: 24, paddingRight: 24 }}>
+                                        <Typography gutterBottom variant="headline" component="h2">
+                                            Der Mensa-Verein
+                                        </Typography>
+                                        <Typography component="p">
+                                            Der Mensa-Verein ist zuständig für die komplette Organisation der Mensa.    
+                                        </Typography>
+                                    </CardContent>
+                                    <CardActions style={{ paddingLeft: 12, paddingRight: 12 }}>
+                                        <Button size="small" color="primary" href="http://ev-g-m.de/mensa-verein.html" target="_blank">Weitere Informationen</Button>
+                                    </CardActions>
+                                </Card>
 
-                            <Typography paragraph style={{ paddingLeft: 16, paddingRight: 16, lineHeight: 1.5 }}>
-                                Der Mensa-Verein ist zuständig für die komplette Organisation der Mensa.
-                            </Typography>
+                            </Grid>
 
-                            <Button variant="raised" color="primary" href="http://ev-g-m.de/mensa-verein.html" target="_blank" style={{ position: 'relative', left: '50%', transform: 'translateX(-50%)' }}>Weitere Informationen</Button>
-
-                        </div>
+                        </Grid>
 
                         :
 
                         <div>
 
-                            <Typography variant="title" style={{ padding: 16 }}>Der aktuelle Mensa-Plan</Typography>
-
-                            <img src={this.state.mensaplanURL} style={{ width: '100%', padding: 16 }} />
+                            <Card style={{ width: '100%' }}>
+                                <CardContent style={{ paddingLeft: 24, paddingRight: 24 }}>
+                                    <Typography gutterBottom variant="headline" component="h2">
+                                        Der aktuelle Mensa-Plan
+                                    </Typography>
+                                    <Typography component="p">
+                                        Hier kannst du den aktuellen Mensaplan einsehen
+                                    </Typography>
+                                    <img src={this.state.mensaplanURL} style={{ width: '100%', padding: 16 }} />
+                                </CardContent>
+                            </Card>           
 
                         </div>
 
@@ -158,7 +170,7 @@ class Mensa extends Component {
                         </BottomNavigation>
                     </Paper>
 
-                </Swipeable>
+                </div>
                     
 
             </MuiThemeProvider>

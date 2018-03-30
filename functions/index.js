@@ -304,3 +304,17 @@ exports.onFileUpload = functions.https.onRequest((req, res) => {
 
 });
 
+
+exports.cleanupUserData = functions.auth.user().onDelete(event => {
+
+    const uid = event.data.uid;
+    
+    return admin.database().ref("/users/").orderByChild("uid").equalTo(uid).once("child_added", snapshot => {
+
+        let refToUser = '/users/' + snapshot.ref.path.pieces_[1];
+
+        return admin.database().ref(refToUser).remove(), admin.database().ref(refToUser).remove();
+
+    });
+     
+});

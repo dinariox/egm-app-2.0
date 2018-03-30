@@ -45,10 +45,6 @@ import PrevIcon from 'material-ui-icons/NavigateBefore';
 import NextIcon from 'material-ui-icons/NavigateNext';
 
 
-// Swipeable
-import Swipeable from 'react-swipeable';
-
-
 // Own components
 import EGMAppBar from './../components/EGMAppBar';
 
@@ -116,9 +112,9 @@ function Transition(props) {
 
 class Stundenplan extends Component {
 
-    constructor() {
+    constructor(props) {
 
-        super();
+        super(props);
         this.state = {
             pageTitle: 'Stundenplan',
 
@@ -198,7 +194,7 @@ class Stundenplan extends Component {
             'Montag'
         ];
 
-        let currentDay = dayList[new Date().getDay()];
+        let currentDay = dayList[new Date().getDay() - 1];
 
         this.setState({ dayViewActiveDay: currentDay });
 
@@ -223,7 +219,20 @@ class Stundenplan extends Component {
 
             this.setState({ activeView: defaultStundenplanDayView ? 'day' : 'week', checkedStartWithDayView: defaultStundenplanDayView });
 
+        }).then(() => {
+          
+            if (this.props.match.params.reopen === 'reopen') {
+
+                console.log(this.props.match.params.reopen);
+
+                this.reopenSetup();
+
+            }
+
         });
+
+
+        
 
     }
 
@@ -320,23 +329,6 @@ class Stundenplan extends Component {
     handleClose = () => {
         this.setState({ openInfo: false });
     };
-
-
-    switchStartWithDayView = event => {
-
-        db.ref("/users/").orderByChild("uid").equalTo(auth.currentUser.uid).once("child_added", snapshot => {
-
-            let refToSettings = '/users/' + snapshot.ref.path.pieces_[1] + '/preferences/'
-
-            db.ref(refToSettings).update({
-                defaultStundenplanDayView: event.target.checked
-            });
-
-            this.setState({ checkedStartWithDayView: event.target.checked });
-
-        });
-
-    }
 
 
     switchStundenEditMode() {
@@ -646,8 +638,6 @@ class Stundenplan extends Component {
             return alert('Bitte füge mindestens 1 Fach hinzu');
         }
 
-        this.setState({ activeView: this.state.setupNotFirstTime ? 'settings' : 'week' });
-
         db.ref("/users/").orderByChild("uid").equalTo(auth.currentUser.uid).once("child_added", snapshot => {
 
             let refToPlan = '/users/' + snapshot.ref.path.pieces_[1] + '/stundenplan/'
@@ -656,9 +646,11 @@ class Stundenplan extends Component {
 
                 db.ref(refToPlan).update({
                     faecher: this.state.setupFaecherList
-                }).then(() => this.loadStundenplan());
+                }).then(() => this.props.history.push('/einstellungen'));
 
             } else {
+
+                this.setState({ activeView: 'week' });
 
                 db.ref(refToPlan).set({
                     faecher: this.state.setupFaecherList,
@@ -682,6 +674,8 @@ class Stundenplan extends Component {
 
     reopenSetup() {
 
+        
+
         db.ref('/users/').orderByChild('uid').equalTo(auth.currentUser.uid).once('value', (snapshot) => {
 
             let data = snapshot.val();
@@ -689,7 +683,9 @@ class Stundenplan extends Component {
 
             let faecher = stundenplanInfo.faecher;
 
-            this.setState({ activeView: 'setup', setupNotFirstTime: true, setupFaecherList: faecher })
+            this.setState({ setupNotFirstTime: true, setupFaecherList: faecher });
+
+            this.setState({ activeView: 'setup' });
 
         }, err => {
 
@@ -739,27 +735,6 @@ class Stundenplan extends Component {
     }
 
 
-    swipedRight(e, deltaX, isFlick) {
-
-        if (deltaX <= -50 && isFlick) {
-
-            this.refs.appBar.refs.menuDrawerLeft.openDrawerLeft();
-
-        }
-
-    }
-
-    swipedLeft(e, deltaX, isFlick) {
-
-        if (deltaX >= 50 && isFlick) {
-
-            this.refs.appBar.refs.menuDrawerLeft.closeDrawerLeft();
-
-        }
-
-    }
-
-
     render() {
 
         let { montag, dienstag, mittwoch, donnerstag, freitag } = this.state;
@@ -768,10 +743,7 @@ class Stundenplan extends Component {
 
             <MuiThemeProvider theme={theme}>
 
-                <Swipeable
-                    onSwipedRight={(e, deltaX, isFlick) => this.swipedRight(e, deltaX, isFlick)}
-                    onSwipedLeft={(e, deltaX, isFlick) => this.swipedLeft(e, deltaX, isFlick)}
-                    style={{ backgroundColor: '#fbfbfb', minHeight: '100vh' }}>
+                <div style={{ backgroundColor: '#fbfbfb', minHeight: '100vh' }}>
 
                     <CssBaseline />
 
@@ -1285,32 +1257,7 @@ class Stundenplan extends Component {
 
                             :
 
-                            //  SETTINGS / OPTIONS
-
-                                <List>
-                                    <ListItem button>
-                                        <FormControlLabel
-                                            control={
-                                                <Switch
-                                                    checked={this.state.checkedStartWithDayView}
-                                                    onChange={this.switchStartWithDayView}
-                                                    value="startWithDayView"
-                                                    color="primary"
-                                                />
-                                            }
-                                            label="Standardmäßig die Tagesansicht anzeigen"
-                                        />
-                                    </ListItem>
-                                    
-                                    <ListItem button onClick={() => this.reopenSetup()}>
-                                        <ListItemIcon>
-                                            <EditIcon />
-                                        </ListItemIcon>
-                                        <ListItemText primary="Fächer bearbeiten" secondary="Fächer hinzufügen, bearbeiten und entfernen" />
-                                    </ListItem>
-                                </List>
-
-                        
+                            null    
 
                     }
 
@@ -1461,7 +1408,7 @@ class Stundenplan extends Component {
                     </Dialog>
 
 
-                </Swipeable>
+                </div>
 
 
             </MuiThemeProvider>

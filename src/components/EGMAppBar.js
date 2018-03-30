@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 import './EGMAppBar.css';
 
-import Drawer from 'material-ui/Drawer';
+import SwipeableDrawer from 'material-ui/SwipeableDrawer';
 import Divider from 'material-ui/Divider';
 import AppBar from 'material-ui/AppBar';
 import Toolbar from 'material-ui/Toolbar';
@@ -215,7 +215,7 @@ class EGMAppBar extends Component {
                                     
                                     this.props.stundenplanView === 'editStunden' ?
 
-                                        <IconButton className="notificationButton" color="secondary" aria-label="Zu den Einstellungen" onClick={() => this.props.stundenplanChangeView('settings')}>
+                                        <IconButton className="notificationButton" color="secondary" aria-label="Zu den Einstellungen" component={Link} to="/einstellungen/stundenplan">
                                             <SettingsIcon />
                                         </IconButton>
 
@@ -285,6 +285,24 @@ const cardStyle = {
 
 class ProfileDisplay extends Component {
 
+    constructor() {
+
+        super();
+
+        this.state = {
+
+            profileImage: personImg
+
+        }
+
+    }
+
+    componentDidMount() {
+
+        this.setState({ profileImage: auth.currentUser.photoURL || personImg });
+
+    }
+
     render() {
 
         return (
@@ -298,12 +316,12 @@ class ProfileDisplay extends Component {
                         <div style={{display: 'flex', width: '100%'}}>
                             <Typography variant="title" style={{color: '#fff'}}>EGM App</Typography>
                             <div className="iconButtonsWrapper">
-                                <IconButton color="secondary"><SettingsIcon /></IconButton>
+                                <IconButton color="secondary" component={Link} to="/einstellungen"><SettingsIcon /></IconButton>
                                 <IconButton color="secondary"><HelpIcon /></IconButton>
                             </div>
                         </div>
                         <div className="userInfoWrapper">
-                            <Avatar src={personImg} className="avatar" style={{width: 48, height: 48}} />
+                            <IconButton component={Link} to="/einstellungen/konto"><Avatar src={this.state.profileImage} className="avatar" style={{width: 48, height: 48}} /></IconButton>
                             <CurrentAccountDisplay />
                         </div>
                     </CardContent>
@@ -332,7 +350,7 @@ class CurrentAccountDisplay extends Component {
 
             let data = snapshot.val();
             let userInfo = data[Object.keys(data)[0]]
-            this.setState({ userFirstname: userInfo.firstname, userLastname: userInfo.lastname, userStufe: userInfo.stufe });
+            this.setState({ userFirstname: userInfo.firstname, userLastname: userInfo.lastname, userStufe: userInfo.stufe, userIsAdmin: userInfo.admin ? true : false });
 
         }).catch(err => {
 
@@ -360,7 +378,7 @@ class CurrentAccountDisplay extends Component {
 
             <Button className="wrapper" onClick={() => {this.handleLogout()}}>
                 <div className="text">
-                    <p className="name">{this.state.userFirstname + ' ' + this.state.userLastname}</p>
+                    <p className="name">{this.state.userFirstname + ' ' + this.state.userLastname}{this.state.userIsAdmin ? ' (Admin)' : ''}</p>
                     <p className="stufe">{this.state.userStufe === 'lehrer' ? <span>Lehrer/in des EGM</span> : <span>Schüler/in <b>·</b> Stufe: {this.state.userStufe}</span> }</p>
                 </div>
                 <div className="icon">
@@ -476,7 +494,7 @@ class MenuDrawerLeft extends Component {
                 <MenuIcon />
             </IconButton>
 
-            <Drawer open={this.state.left} onClose={this.toggleDrawer('left', false)}>
+            <SwipeableDrawer open={this.state.left} onClose={this.toggleDrawer('left', false)} onOpen={this.toggleDrawer('left', true)}>
 
                 <div tabIndex={0} role="button" onClick={this.toggleDrawer('left', false)} onKeyDown={this.toggleDrawer('left', false)}>
 
@@ -484,7 +502,7 @@ class MenuDrawerLeft extends Component {
 
                 </div>
 
-            </Drawer>
+            </SwipeableDrawer>
 
         </div>
     );

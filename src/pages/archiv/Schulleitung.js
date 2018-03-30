@@ -13,9 +13,6 @@ import theme from './../../theme';
 // MUI Components
 
 
-// Swipeable
-import Swipeable from 'react-swipeable';
-
 
 // Own Components
 import EGMAppBar from './../../components/EGMAppBar';
@@ -47,25 +44,6 @@ class Schulleitung extends Component {
 
     }
 
-    swipedRight(e, deltaX, isFlick) {
-
-        if (deltaX <= -50 && isFlick) {
-
-            this.refs.appBar.refs.menuDrawerLeft.openDrawerLeft();
-
-        }
-
-    }
-
-    swipedLeft(e, deltaX, isFlick) {
-
-        if (deltaX >= 50 && isFlick) {
-
-            this.refs.appBar.refs.menuDrawerLeft.closeDrawerLeft();
-
-        }
-
-    }
 
     render() {
 
@@ -74,10 +52,7 @@ class Schulleitung extends Component {
 
             <MuiThemeProvider theme={theme}>
 
-                <Swipeable
-                    onSwipedRight={(e, deltaX, isFlick) => this.swipedRight(e, deltaX, isFlick)}
-                    onSwipedLeft={(e, deltaX, isFlick) => this.swipedLeft(e, deltaX, isFlick)}
-                    style={{ backgroundColor: '#fbfbfb', minHeight: '100vh' }}>
+                <div style={{ backgroundColor: '#fbfbfb', minHeight: '100vh' }}>
 
                     <EGMAppBar ref="appBar" title={this.state.pageTitle} />
                     <div className="appBarSpacer"></div>
@@ -87,7 +62,7 @@ class Schulleitung extends Component {
                     <div className="bottomNavigationSpacer"></div>
                         <ArchivNavigation value={this.state.value} history={this.props.history} />
 
-                </Swipeable>
+                </div>
 
             </MuiThemeProvider>
 

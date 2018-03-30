@@ -88,3 +88,23 @@
     color: #4CAF50 !important;
 
 }
+
+
+@keyframes flashRed {
+
+    0% {
+        color: black;
+        transform: scale(1);
+    }
+
+    40%, 60% {
+        color: red;
+        transform: scale(1.1);
+    }
+
+    100% {
+        color: black;
+        transform: scale(1);
+    }
+
+}

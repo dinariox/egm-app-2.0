@@ -19,10 +19,6 @@ import Button from 'material-ui/Button';
 import ArrowIcon from 'material-ui-icons/NavigateNext';
 
 
-// Swipeable
-import Swipeable from 'react-swipeable';
-
-
 // Own components
 import EGMImageBar from './../components/EGMImageBar';
 import WelcomeCard from './../components/WelcomeCard';
@@ -66,37 +62,12 @@ class Sharens extends Component {
     }
 
 
-    swipedRight(e, deltaX, isFlick) {
-
-        if (deltaX <= -50 && isFlick) {
-
-            this.refs.appBar.refs.appBar.refs.menuDrawerLeft.openDrawerLeft();
-
-        }
-
-    }
-
-    swipedLeft(e, deltaX, isFlick) {
-
-        if (deltaX >= 50 && isFlick) {
-
-            this.refs.appBar.refs.appBar.refs.menuDrawerLeft.closeDrawerLeft();
-
-        }
-
-    }
-
-
-
     render() {
         return (
 
             <MuiThemeProvider theme={theme}>
 
-                <Swipeable
-                    onSwipedRight={(e, deltaX, isFlick) => this.swipedRight(e, deltaX, isFlick)}
-                    onSwipedLeft={(e, deltaX, isFlick) => this.swipedLeft(e, deltaX, isFlick)}
-                    style={{ backgroundColor: '#fbfbfb', minHeight: '100vh' }}>
+                <div style={{ backgroundColor: '#fbfbfb', minHeight: '100vh' }}>
 
                     <CssBaseline />
 
@@ -204,7 +175,7 @@ class Sharens extends Component {
                     </Card>
 
 
-                </Swipeable>
+                </div>
 
 
             </MuiThemeProvider>

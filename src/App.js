@@ -16,6 +16,7 @@ import OpenStufenbrett from "./pages/stufenbrett/OpenStufenbrett";
 import Sharens from "./pages/Sharens";
 import Stundenplan from "./pages/Stundenplan";
 import Mensa from "./pages/Mensa";
+import Einstellungen from "./pages/Einstellungen";
 
 import { CircularProgress } from 'material-ui/Progress';
 
@@ -170,8 +171,11 @@ class App extends Component {
                         <Route path="/stufenbrett" exact component={Stufenbrett} />
                         <Route path="/stufenbrett/open/:articleID" exact component={OpenStufenbrett} />
                         <Route path="/sharens" component={Sharens} />
-                        <Route path="/stundenplan" component={Stundenplan} />
+                        <Route path="/stundenplan" exact component={Stundenplan} />
+                        <Route path="/stundenplan/:reopen" component={Stundenplan} />
                         <Route path="/mensa" component={Mensa} />
+                        <Route path="/einstellungen" exact component={Einstellungen} />
+                        <Route path="/einstellungen/:highlight" component={Einstellungen} />
 
                     </div>
 

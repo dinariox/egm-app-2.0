@@ -28,10 +28,6 @@ import NDayIcon from 'material-ui-icons/Event';
 import CheckIcon from 'material-ui-icons/Check';
 
 
-// Swipeable
-import Swipeable from 'react-swipeable';
-
-
 // Own Components
 import EGMAppBar from './../components/EGMAppBar';
 import VertretungExpansionPanel from './../components/VertretungExpansionPanel';
@@ -164,26 +160,6 @@ class Plan extends Component {
     }
 
 
-    swipedRight(e, deltaX, isFlick) {
-
-        if (deltaX <= -50 && isFlick) {
-
-            this.refs.appBar.refs.menuDrawerLeft.openDrawerLeft();
-
-        }
-
-    }
-
-    swipedLeft(e, deltaX, isFlick) {
-
-        if (deltaX >= 50 && isFlick) {
-
-            this.refs.appBar.refs.menuDrawerLeft.closeDrawerLeft();
-
-        }
-
-    }
-
 
     render() {
 
@@ -192,9 +168,7 @@ class Plan extends Component {
 
             <MuiThemeProvider theme={theme}>
 
-                <Swipeable
-                    onSwipedRight={(e, deltaX, isFlick) => this.swipedRight(e, deltaX, isFlick)}
-                    onSwipedLeft={(e, deltaX, isFlick) => this.swipedLeft(e, deltaX, isFlick)}>
+                <div>
 
                     <CssBaseline />
 
@@ -437,7 +411,7 @@ class Plan extends Component {
                         </BottomNavigation>
                     </Paper>
                     
-                </Swipeable>
+                </div>
 
             </MuiThemeProvider>
 
