@@ -1,6 +1,6 @@
 {
   "name": "mui-test",
-  "version": "0.6.4",
+  "version": "0.6.5",
   "private": true,
   "dependencies": {
     "@material-ui/lab": "^1.0.0-alpha.0",
