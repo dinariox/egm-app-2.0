@@ -40,7 +40,7 @@ class Home extends Component {
     }
 
 
-    componentWillMount() {
+    componentDidMount() {
 
         let cDay = new Date().getDate();
         let cMonth = new Date().getMonth();
@@ -72,17 +72,6 @@ class Home extends Component {
 
 
         
-
-    }
-
-
-    componentDidMount() {
-
-        db.ref('/users/').orderByChild('uid').equalTo(auth.currentUser.uid).once('value').then((snapshot) => {
-
-            snapshot.forEach(val => { return val.val() });
-
-        })
 
     }
 

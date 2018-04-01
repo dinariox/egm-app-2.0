@@ -35,6 +35,7 @@ import { FormControlLabel } from 'material-ui/Form';
 import Switch from 'material-ui/Switch';
 import Zoom from 'material-ui/transitions/Zoom';
 import Slide from 'material-ui/transitions/Slide';
+import TextField from 'material-ui/TextField';
 
 import EditIcon from 'material-ui-icons/Edit';
 import DoneIcon from 'material-ui-icons/Done';
@@ -50,7 +51,6 @@ import EGMAppBar from './../components/EGMAppBar';
 
 // Firebase References
 import firebase from './../firebase';
-import { TextField } from 'material-ui';
 const db = firebase.database();
 const auth = firebase.auth();
 // const storage = firebase.storage();

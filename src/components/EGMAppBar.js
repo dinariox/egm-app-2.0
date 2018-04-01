@@ -17,6 +17,7 @@ import Button from 'material-ui/Button';
 import Dialog, { DialogTitle, DialogContent, DialogActions } from 'material-ui/Dialog';
 import { FormGroup, FormControlLabel } from 'material-ui/Form';
 import Switch from 'material-ui/Switch';
+import { CircularProgress } from 'material-ui';
 
 
 import StartIcon from 'material-ui-icons/Explore';
@@ -321,7 +322,7 @@ class ProfileDisplay extends Component {
                             </div>
                         </div>
                         <div className="userInfoWrapper">
-                            <IconButton component={Link} to="/einstellungen/konto"><Avatar src={this.state.profileImage} className="avatar" style={{width: 48, height: 48}} /></IconButton>
+                            <IconButton component={Link} to="/einstellungen/konto"><Avatar src={this.state.profileImage} className="avatar" style={{ width: 48, height: 48 }} /></IconButton>
                             <CurrentAccountDisplay />
                         </div>
                     </CardContent>
