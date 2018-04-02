@@ -1,11 +1,14 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 
+import Button from 'material-ui/Button';
 import Card, { CardContent } from 'material-ui/Card';
-import List, { ListItem, ListItemText } from 'material-ui/List';
+import List, { ListItem, ListItemText, ListItemSecondaryAction } from 'material-ui/List';
 import Avatar from 'material-ui/Avatar';
 import Typography from 'material-ui/Typography';
 import { CircularProgress } from 'material-ui/Progress';
+import Menu, { MenuItem } from 'material-ui/Menu';
+import IconButton from 'material-ui/IconButton';
 
 import NotInterestedIcon from 'material-ui-icons/NotInterested';
 import WarningIcon from 'material-ui-icons/Warning';
@@ -14,10 +17,16 @@ import DescriptionIcon from 'material-ui-icons/Description';
 import InfoOutlineIcon from 'material-ui-icons/InfoOutline';
 import TextsmsIcon from 'material-ui-icons/Textsms';
 
+import EditIcon from 'material-ui-icons/Edit';
+import DeleteIcon from 'material-ui-icons/Delete';
+import MoreVertIcon from 'material-ui-icons/MoreVert';
+import AddIcon from 'material-ui-icons/Add';
+
 import './FullArticlesCard.css';
 
 import firebase from './../firebase';
 const db = firebase.database();
+const auth = firebase.auth();
 
 
 class FullArticlesCard extends Component {
@@ -36,7 +45,10 @@ class FullArticlesCard extends Component {
             schulleitung: [
 
             ],
-            articlesLoaded: false
+            articlesLoaded: false,
+            menuAnchorEl: null,
+            userIsAdmin: false,
+            clickedEntryID: 0
         };
 
     }
@@ -44,6 +56,28 @@ class FullArticlesCard extends Component {
 
     componentDidMount() {
 
+
+        this.loadArticles();
+
+
+        // Hat der User Admin-Rechte?
+
+        db.ref('/users/').orderByChild('uid').equalTo(auth.currentUser.uid).once('value').then((snapshot) => {
+
+            let data = snapshot.val();
+            let userInfo = data[Object.keys(data)[0]]
+            this.setState({ userIsAdmin: userInfo.admin ? true : false });
+
+        }).catch(err => {
+
+            console.log('Error loading user data in OpenArticle:', err);
+
+        });
+
+
+    }
+
+    loadArticles() {
 
         switch (this.props.mode) {
 
@@ -86,7 +120,6 @@ class FullArticlesCard extends Component {
 
     }
 
-
     handleFirebaseArticles(snapshot, mode) {
 
         let sortedArticles = [];
@@ -127,6 +160,31 @@ class FullArticlesCard extends Component {
     }
 
 
+    handleOpenMenu(event) {
+        this.setState({ menuAnchorEl: event.currentTarget });
+    }
+
+
+    deleteArticle() {
+
+        let confirmDelete = window.confirm('Möchtest du den Artikel wirklich löschen?');
+
+        if (confirmDelete) {
+
+            db.ref(this.props.mode + '/' + this.state.clickedEntryID).remove().then(() => {
+
+                return alert('Der Artikel wurde erfolgreich gelöscht'), this.loadArticles();
+
+            }).catch(error => {
+
+                return alert('Der Artikel konnte nicht gelöscht werden\n\n' + error.message);
+
+            });
+
+        }
+
+    }
+
     render() {
 
         return (
@@ -136,6 +194,7 @@ class FullArticlesCard extends Component {
                 <CardContent className="articleContent">
 
                     <Typography variant="subheading">{this.props.heading}</Typography>
+                    { this.state.userIsAdmin && <Button component={Link} to={'/archiv/create/' + this.props.mode} size="small" style={{ position: 'absolute', right: 8, top: 6 }}><AddIcon />&nbsp;Artikel erstellen</Button> }
 
                 </CardContent>
 
@@ -156,6 +215,11 @@ class FullArticlesCard extends Component {
                                                 <ArticleIcon icon={article.icon || 'Fehler'} />
                                             </Avatar>
                                             <ListItemText primary={article.titel || 'Fehler'} secondary={article.datum || 'Fehler'} />
+                                            { this.state.userIsAdmin &&
+                                                <ListItemSecondaryAction>
+                                                    <IconButton onClick={event => { this.handleOpenMenu(event); this.setState({ clickedEntryID: article.link }) }}><MoreVertIcon /></IconButton>
+                                                </ListItemSecondaryAction>
+                                            }
                                         </ListItem>
 
                                     );
@@ -179,6 +243,11 @@ class FullArticlesCard extends Component {
                                                     <ArticleIcon icon={article.icon || 'Fehler'} />
                                                 </Avatar>
                                                 <ListItemText primary={article.titel || 'Fehler'} secondary={article.datum || 'Fehler'} />
+                                                {this.state.userIsAdmin &&
+                                                    <ListItemSecondaryAction>
+                                                        <IconButton onClick={event => { this.handleOpenMenu(event); this.setState({ clickedEntryID: article.link }) }}><MoreVertIcon /></IconButton>
+                                                    </ListItemSecondaryAction>
+                                                }
                                             </ListItem>
 
                                         );
@@ -202,6 +271,11 @@ class FullArticlesCard extends Component {
                                                         <ArticleIcon icon={article.icon || 'Fehler'} />
                                                     </Avatar>
                                                     <ListItemText primary={article.titel || 'Fehler'} secondary={article.datum || 'Fehler'} />
+                                                    {this.state.userIsAdmin &&
+                                                        <ListItemSecondaryAction>
+                                                            <IconButton onClick={event => { this.handleOpenMenu(event); this.setState({ clickedEntryID: article.link }) }}><MoreVertIcon /></IconButton>
+                                                        </ListItemSecondaryAction>
+                                                    }
                                                 </ListItem>
 
                                             );
@@ -225,6 +299,11 @@ class FullArticlesCard extends Component {
                                                             <ArticleIcon icon={article.icon || 'Fehler'} />
                                                         </Avatar>
                                                         <ListItemText primary={article.titel || 'Fehler'} secondary={article.datum || 'Fehler'} />
+                                                        {this.state.userIsAdmin &&
+                                                            <ListItemSecondaryAction>
+                                                                <IconButton onClick={event => { this.handleOpenMenu(event); this.setState({ clickedEntryID: article.link }) }}><MoreVertIcon /></IconButton>
+                                                            </ListItemSecondaryAction>
+                                                        }
                                                     </ListItem>
 
                                                 );
@@ -245,8 +324,20 @@ class FullArticlesCard extends Component {
 
                 </div>
 
+                <Menu
+                    id="edit-delete-menu"
+                    anchorEl={this.state.menuAnchorEl}
+                    open={Boolean(this.state.menuAnchorEl)}
+                    onClose={() => this.setState({ menuAnchorEl: null })}
+                >
+                    <MenuItem component={Link} to={{ pathname: '/archiv/open/' + this.props.mode + '/' + this.state.clickedEntryID + '/false/true' }} onClick={this.handleCloseMenu}><EditIcon style={{ color: '#555', marginRight: 8 }} />Bearbeiten</MenuItem>
+                    <MenuItem onClick={() => { this.setState({ menuAnchorEl: null }); this.deleteArticle() }}><DeleteIcon style={{ color: '#555', marginRight: 8 }} />Löschen</MenuItem>
+                </Menu>
+
+
             </Card>
 
+            
         );
 
     }

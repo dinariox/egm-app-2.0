@@ -29,7 +29,7 @@ class ArticleAppBar extends Component {
                 <AppBar position="fixed" style={{ backgroundColor: primaryColor }}>
                     <Toolbar>
                         <Typography color="inherit" variant="title" className="flex">
-                            {this.props.editMode ? this.props.title + ' bearbeiten' : this.props.title}
+                            {this.props.editMode ? this.props.title.includes('erstellen') ? this.props.title : this.props.title + ' bearbeiten' : this.props.title}
                         </Typography>
                         {
                             this.props.editIcon &&

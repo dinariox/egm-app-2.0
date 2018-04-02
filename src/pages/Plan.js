@@ -177,14 +177,14 @@ class Plan extends Component {
                     <div className="appBarSpacer"></div>
 
                     {/* CDAY */}
-                    <Grow in={this.state.growC} mountOnEnter unmountOnExit>
+                    <Grow style={{ position: 'absolute', width: '100%' }} in={this.state.growC} mountOnEnter unmountOnExit>
                         <div>
                             <Card style={{ marginBottom: 8, minHeight: 160 }}>
                                 <CardContent style={{ paddingBottom: 16 }}>
 
                                     <Typography variant="headline" style={{ textAlign: 'center' }}>
                                         Vertretungen
-                                </Typography>
+                                    </Typography>
 
                                     <Typography variant="body1" style={{ textAlign: 'center', paddingBottom: 10 }}>
                                         {this.state.cDayVertretungenReady ? `für ${this.state.cDayForDate.dayOfWeek}, den ${this.state.cDayForDate.day}. ${this.state.cDayForDateMonthName}` : ''}
@@ -251,7 +251,7 @@ class Plan extends Component {
 
                             </Card>
 
-                            <Card style={{ minHeight: 160 }}>
+                            {/* <Card style={{ minHeight: 160 }}>
                                 <CardContent>
 
                                     <Typography variant="headline" style={{ textAlign: 'center' }}>
@@ -286,12 +286,12 @@ class Plan extends Component {
                                 }
 
 
-                            </Card>
+                            </Card> */}
                         </div>
                     </Grow>
 
                     {/* NDAY */}
-                    <Grow in={this.state.growN} mountOnEnter unmountOnExit {...(this.state.growN ? { timeout: 1000 } : {})}>
+                    <Grow style={{ position: 'absolute', width: '100%' }} in={this.state.growN} mountOnEnter unmountOnExit {...(this.state.growN ? { timeout: 1000 } : {})}>
                         <div>
                             <Card style={{ marginBottom: 8, minHeight: 160 }}>
                                 <CardContent style={{ paddingBottom: 16 }}>
@@ -363,7 +363,7 @@ class Plan extends Component {
 
                             </Card>
 
-                            <Card style={{ minHeight: 160 }}>
+                            {/* <Card style={{ minHeight: 160 }}>
                                 <CardContent>
 
                                     <Typography variant="headline" style={{ textAlign: 'center' }}>
@@ -398,7 +398,7 @@ class Plan extends Component {
                                 }
 
 
-                            </Card>
+                            </Card> */}
                         </div>
                     </Grow>
 

@@ -22,6 +22,7 @@ import Paper from 'material-ui/Paper';
 import BottomNavigation, { BottomNavigationAction } from 'material-ui/BottomNavigation';
 import Grow from 'material-ui/transitions/Grow';
 import Grid from 'material-ui/Grid';
+import Zoom from 'material-ui/transitions/Zoom';
 
 import CDayIcon from 'material-ui-icons/Today';
 import NDayIcon from 'material-ui-icons/Event';
@@ -53,7 +54,8 @@ class Mensa extends Component {
         this.state = {
             pageTitle: 'Mensa',
             modeValue: 0,
-            mensaplanURL: ''
+            mensaplanURL: '',
+            mensaplanLoaded: false
         };
 
     }
@@ -152,7 +154,8 @@ class Mensa extends Component {
                                     <Typography component="p">
                                         Hier kannst du den aktuellen Mensaplan einsehen
                                     </Typography>
-                                    <img src={this.state.mensaplanURL} style={{ width: '100%', padding: 16 }} />
+                                    <img onLoad={() => this.setState({ mensaplanLoaded: true })} src={this.state.mensaplanURL} style={{ width: '100%', padding: 16 }} />
+                                    <CircularProgress style={{ display: this.state.mensaplanLoaded ? 'none' : '', position: 'relative', left: '50%', transform: 'translateX(-50%)' }} />
                                 </CardContent>
                             </Card>           
 

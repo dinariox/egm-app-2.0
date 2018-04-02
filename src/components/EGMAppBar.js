@@ -312,7 +312,8 @@ class ProfileDisplay extends Component {
                     minWidth: '275px',
                     backgroundImage: 'url(' + cardImage + ')',
                     backgroundSize: 'cover',
-                    backgroundColor: '#abc'}}>
+                    backgroundColor: '#abc',
+                    borderRadius: '0px'}}>
                     <CardContent>
                         <div style={{display: 'flex', width: '100%'}}>
                             <Typography variant="title" style={{color: '#fff'}}>EGM App</Typography>

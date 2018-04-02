@@ -103,31 +103,18 @@ const iconList = [
 ]
 
 
-class OpenArticle extends Component {
+class CreateArticle extends Component {
 
     constructor(props) {
 
         super(props);
 
         let modeFromUrl = this.props.match.params.mode;
-        let pageTitle = modeFromUrl === 'sv' ? 'SV-Beitrag' : modeFromUrl.charAt(0).toUpperCase() + modeFromUrl.slice(1) + '-Beitrag';
+        let pageTitle = modeFromUrl === 'sv' ? 'SV-Beitrag erstellen' : modeFromUrl.charAt(0).toUpperCase() + modeFromUrl.slice(1) + '-Beitrag erstellen';
 
         this.state = {
             pageTitle: pageTitle,
-            article: {
-                id: 0,
-                title: '',
-                text: '',
-                date: '',
-                icon: '',
-                iconColor: '',
-                image: ''
-            },
-            loadingBarOpacity: 1,
-            fabOpacity: 0,
-            textOpacity: 0,
             userIsAdmin: false,
-            editMode: false,
 
             editID: 0,
             editTitle: '',
@@ -149,10 +136,6 @@ class OpenArticle extends Component {
 
     componentDidMount() {
 
-        this.loadArticle();
-
-
-
         // Hat der User Admin-Rechte?
 
         db.ref('/users/').orderByChild('uid').equalTo(auth.currentUser.uid).once('value').then((snapshot) => {
@@ -166,100 +149,12 @@ class OpenArticle extends Component {
             console.log('Error loading user data in OpenArticle:', err);
 
         });
-   
 
-    }
-
-    
-    loadArticle() {
-
-        const mode = this.props.match.params.mode;
-        const articleID = parseInt(this.props.match.params.articleID);
-
-        db.ref('/' + mode).orderByChild('link').equalTo(articleID).once('value', snapshot => {
-
-            if (!snapshot.exists()) {
-
-                imageH = '0px';
-                this.setState({
-
-                    loadingBarOpacity: 0,
-                    article: {
-                        date: 'Fehler',
-                        title: 'Der Artikel exisitert nicht',
-                        text: 'Sorry, aber der Artikel, den du versucht hast zu laden, existiert nicht in der Datenbank 😕'
-                    }
-
-                });
-
-                return console.error('Artikel mit der ID ' + articleID + ' in Datenbank ' + mode + ' existiert nicht.');
-
-            }
-
-            const article = snapshot.val()[articleID];
-
-            this.setState({
-
-                article: {
-                    id: articleID,
-                    title: article.titel || 'Fehler',
-                    text: article.text.replace(/<br\s*\/?>/mg, "\n") || 'Fehler',
-                    date: article.datum || 'Fehler',
-                    icon: article.icon || '',
-                    iconColor: article.iconColor || '',
-                    image: article.image || '',
-                    attachment: article.anhang || undefined
-                }
-
-            });
-
-            if (article.image !== "" && article.image !== undefined) {
-
-                let aspectRatio = 16 / 9;
-                imageH = window.innerWidth / aspectRatio;
-                imageH = imageH >= 500 ? 500 : imageH;
-
-            } else {
-
-                imageH = '0px';
-                this.setState({
-
-                    loadingBarOpacity: 0
-
-                });
-
-            }
-
-            this.setState({
-
-                textOpacity: 1
-
-            });
-
-            // Wenn über die URL direkt in den edit Mode gesprungen werden soll (drei Punkte in der Liste -> Bearbeiten)
-            if (this.props.match.params.editMode) this.enterEditMode();
-
-        }).catch(error => {
-
-            this.setState({
-                loadingBarOpacity: 0,
-            });
-
-            console.error('Article loading error', error.message);
-
-        });
 
     }
 
 
-    componentWillUnmount() {
-
-        imageH = 0;
-
-    }
-
-
-    insertCurrentDate () {
+    insertCurrentDate() {
 
         let today = new Date();
         let dd = today.getDate();
@@ -280,23 +175,6 @@ class OpenArticle extends Component {
 
     }
 
-
-    enterEditMode() {
-
-        let { article } = this.state;
-
-        this.setState({ 
-            editMode: true,
-            editID: article.id,
-            editTitle: article.title,
-            editText: article.text,
-            editDate: article.date,
-            editIcon: article.icon,
-            editIconColor: article.iconColor,
-            editImage: article.image
-        });
-
-    }
 
     acceptNewImage(event) {
 
@@ -384,7 +262,7 @@ class OpenArticle extends Component {
 
             uploadTask.on('state_changed', snapshot => {
                 let progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
-            
+
                 this.setState({ uploadProgress: progress });
 
             }, error => {
@@ -414,9 +292,10 @@ class OpenArticle extends Component {
                 var newImgUrl = uploadTask.snapshot.downloadURL
 
                 this.setState({
-                    uploadStatus: 'Änderungen werden angewandt...'
+                    uploadStatus: 'Text wird hochgeladen...'
                 });
 
+                let newId = new Date().getTime();
 
                 let updateInfo = {
                     titel: this.state.editTitle,
@@ -425,10 +304,10 @@ class OpenArticle extends Component {
                     icon: this.state.editIcon,
                     iconColor: this.state.editIconColor,
                     image: newImgUrl,
-                    link: this.state.editID
+                    link: newId
                 }
 
-                db.ref(this.props.match.params.mode + '/' + this.state.editID).update(updateInfo).then(() => {
+                db.ref(this.props.match.params.mode + '/' + newId).set(updateInfo).then(() => {
 
                     this.setState({
 
@@ -444,12 +323,11 @@ class OpenArticle extends Component {
                         editIconColor: '',
                         editImage: '',
                         editImageSize: '',
-                        editNewImageFile: null,
-                        editMode: false
+                        editNewImageFile: null
 
                     });
 
-                    return alert('Der Artikel wurde erfolgreich aktualisiert'), this.props.history.push('/archiv/open/' + this.props.match.params.mode + '/' + this.props.match.params.articleID + '/false');
+                    return alert('Der Artikel wurde erfolgreich veröffentlicht'), this.props.history.push('/archiv/' + this.props.match.params.mode);
 
                 }).catch((error) => {
                     this.setState({
@@ -471,9 +349,11 @@ class OpenArticle extends Component {
             this.setState({
 
                 showUploadProgress: true,
-                uploadStatus: 'Änderungen werden angewandt...'
+                uploadStatus: 'Text wird hochgeladen...'
 
             });
+
+            let newId = new Date().getTime();
 
             let updateInfo = {
                 titel: this.state.editTitle,
@@ -481,11 +361,11 @@ class OpenArticle extends Component {
                 datum: this.state.editDate,
                 icon: this.state.editIcon,
                 iconColor: this.state.editIconColor,
-                image: this.state.editImage,
-                link: this.state.editID
+                image: '',
+                link: newId
             }
 
-            db.ref(this.props.match.params.mode + '/' + this.state.editID).update(updateInfo).then(() => {
+            db.ref(this.props.match.params.mode + '/' + newId).set(updateInfo).then(() => {
 
                 this.setState({
 
@@ -501,12 +381,11 @@ class OpenArticle extends Component {
                     editIconColor: '',
                     editImage: '',
                     editImageSize: '',
-                    editNewImageFile: null,
-                    editMode: false
+                    editNewImageFile: null
 
                 })
 
-                return alert('Der Artikel wurde erfolgreich aktualisiert'), this.props.history.push('/archiv/open/' + this.props.match.params.mode + '/' + this.props.match.params.articleID + '/false');
+                return alert('Der Artikel wurde erfolgreich veröffentlicht'), this.props.history.push('/archiv/' + this.props.match.params.mode);
 
             }).catch((error) => {
                 this.setState({
@@ -545,6 +424,8 @@ class OpenArticle extends Component {
                 editNewImageFile: null
             });
 
+            this.props.history.push('/archiv/' + this.props.match.params.mode);
+
         }
 
     }
@@ -559,77 +440,16 @@ class OpenArticle extends Component {
 
                 <div style={{ backgroundColor: '#fbfbfb', minHeight: '100vh' }}>
 
-                    <ArticleAppBar editMode={this.state.editMode} cancleEdit={() => this.cancleEdit()} editIcon={this.state.userIsAdmin && !this.state.editMode} enterEditMode={() => this.enterEditMode()} title={this.state.pageTitle} mode={this.props.match.params.mode} rth={this.props.match.params.rth} history={this.props.history} />
+                    <ArticleAppBar editMode={true} cancleEdit={() => this.cancleEdit()} title={this.state.pageTitle} mode={this.props.match.params.mode} rth={this.props.match.params.rth} history={this.props.history} />
                     <div className="appBarSpacer"></div>
 
                     {
-                        this.state.editMode ||
-
-                        <div>
-                            <Paper className="articleShowImagePlaceholder" style={{ height: imageH, transition: 'height 300ms' }}>
-                                <img className="articleShowImage" alt="" style={{ height: imageH, transition: 'height 300ms' }} src={this.state.article.image} onLoad={() => { this.setState({ loadingBarOpacity: 0, fabOpacity: 1 }) }} />
-                                <Button variant="fab" aria-label="Bilder anzeigen" className="articleFAB" style={{ opacity: this.state.fabOpacity, transition: 'opacity 300ms' }}>
-                                    <MoreImagesIcon />
-                                </Button>
-                            </Paper>
-
-                            <LinearProgress className="imageLoadingBar" style={{ opacity: this.state.loadingBarOpacity }} />
-
-                            <div className="articleTextWrapper" style={{ opacity: this.state.textOpacity }}>
-
-                                <Typography variant="caption">
-                                    {this.state.article.date}
-                                </Typography>
-
-                                <Typography variant="headline" className="articleTitle">
-                                    {this.state.article.title}
-                                </Typography>
-
-                                {
-
-                                    this.state.article.attachment ?
-
-                                        <Chip className="articleChip" avatar={<Avatar><FileDownloadIcon /></Avatar>} label={"'" + this.state.article.attachment + "' herunterladen"} />
-
-                                        :
-
-                                        null
-
-                                }
-
-
-                                <Typography variant="body1" style={{ whiteSpace: 'pre-line' }}>
-                                    {this.state.article.text}
-                                </Typography>
-
-                            </div>
-                        </div>
-
-                    }
-
-
-                    {/* EDIT MODE */}
-
-                    {
-                        this.state.editMode &&
+                        this.state.userIsAdmin &&
 
                         <div>
 
 
                             <Grid container spacing={16} style={{ padding: 16 }}>
-
-                                <Grid item xs={12} sm={2}>
-
-                                    <TextField
-                                        disabled
-                                        margin="none"
-                                        id="editID"
-                                        label="ID"
-                                        value={this.state.editID}
-                                        fullWidth
-                                    />
-
-                                </Grid>
 
                                 <Grid item xs={12} sm={10}>
 
@@ -645,7 +465,7 @@ class OpenArticle extends Component {
                                 </Grid>
 
                                 <Grid item xs={12}>
-                                
+
                                     <TextField
                                         multiline
                                         rows={4}
@@ -657,7 +477,7 @@ class OpenArticle extends Component {
                                         onChange={(event) => this.setState({ editText: event.target.value })}
                                         fullWidth
                                     />
-                                
+
                                 </Grid>
 
                                 <Grid item xs={9} sm={10} md={11}>
@@ -704,11 +524,11 @@ class OpenArticle extends Component {
                                 <Grid item xs={9} sm={10} md={11}>
 
                                     <Typography style={{ fontSize: 16 }}>Bild:</Typography>
-                                
+
                                     {
                                         this.state.editImage ?
                                             <Fragment><img src={this.state.editImage} style={{ width: '100%', maxWidth: 500 }} />
-                                            <Typography style={{ fontSize: 15 }}>{this.state.editImageSize}</Typography></Fragment>
+                                                <Typography style={{ fontSize: 15 }}>{this.state.editImageSize}</Typography></Fragment>
                                             :
                                             <Typography style={{ fontSize: 15 }}>- Kein Bild vorhanden -</Typography>
                                     }
@@ -720,9 +540,9 @@ class OpenArticle extends Component {
                                     <div style={{ position: 'relative', top: '50%', transform: 'translateY(-50%)' }}>
                                         <input onClick={(event) => { event.target.value = null }} onChange={(event) => this.acceptNewImage(event)} accept="image/png, image/jpeg" id="image-upload" type="file" style={{ display: 'none' }} />
                                         <label htmlFor="image-upload">
-                                            <Button component="span" fullWidth style={{textAlign: 'center'}}>Bild ändern</Button>
+                                            <Button component="span" fullWidth style={{ textAlign: 'center' }}>Bild ändern</Button>
                                         </label>
-                                    
+
                                         <Button fullWidth onClick={() => this.removeImage()}>Bild entfernen</Button>
                                     </div>
 
@@ -730,9 +550,9 @@ class OpenArticle extends Component {
 
                             </Grid>
 
-                            
 
-                            <Zoom in={this.state.editMode && this.state.userIsAdmin}>
+
+                            <Zoom in={this.state.userIsAdmin}>
                                 <Button variant="fab" className="stundenplanFAB" style={{ backgroundColor: '#4CAF50' }} onClick={() => this.uploadChanges()}>
                                     <DoneIcon />
                                 </Button>
@@ -741,19 +561,19 @@ class OpenArticle extends Component {
                         </div>
 
                     }
-                    
+
 
                     {/* UPLOAD EDITED ARTICLE PROGRESS */}
                     <Dialog
                         aria-labelledby="simple-modal-title"
                         open={this.state.showUploadProgress}
                     >
-                        <DialogTitle id="form-dialog-title">Artikel aktualisieren...</DialogTitle>
+                        <DialogTitle id="form-dialog-title">Artikel veröffentlichen...</DialogTitle>
                         <DialogContent>
                             <LinearProgress variant="determinate" value={this.state.uploadProgress} />
                             <DialogContentText>
                                 {this.state.uploadProgress}% - {this.state.uploadStatus}
-                        </DialogContentText>
+                            </DialogContentText>
                         </DialogContent>
                     </Dialog>
 
@@ -793,4 +613,4 @@ function ArticleIcon(props) {
 }
 
 
-export default OpenArticle;
+export default CreateArticle;

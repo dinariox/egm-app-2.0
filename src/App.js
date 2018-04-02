@@ -17,10 +17,11 @@ import Sharens from "./pages/Sharens";
 import Stundenplan from "./pages/Stundenplan";
 import Mensa from "./pages/Mensa";
 import Einstellungen from "./pages/Einstellungen";
+import CreateArticle from "./pages/archiv/CreateArticle";
 
 import { CircularProgress } from 'material-ui/Progress';
-
 import firebase from './firebase';
+
 const messaging = firebase.messaging();
 const db = firebase.database();
 const auth = firebase.auth();
@@ -168,6 +169,8 @@ class App extends Component {
                         <Route path="/archiv/sv" exact component={SV} />
                         <Route path="/archiv/schulleitung" exact component={Schulleitung} />
                         <Route path="/archiv/open/:mode/:articleID/:rth" exact component={OpenArticle} />
+                        <Route path="/archiv/open/:mode/:articleID/:rth/:editMode" exact component={OpenArticle} />
+                        <Route path="/archiv/create/:mode" exact component={CreateArticle} />
                         <Route path="/stufenbrett" exact component={Stufenbrett} />
                         <Route path="/stufenbrett/open/:articleID" exact component={OpenStufenbrett} />
                         <Route path="/sharens" component={Sharens} />
