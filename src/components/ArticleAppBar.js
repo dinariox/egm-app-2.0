@@ -8,6 +8,7 @@ import Typography from 'material-ui/Typography';
 import IconButton from 'material-ui/IconButton';
 
 import EditIcon from 'material-ui-icons/Edit';
+import DeleteIcon from 'material-ui-icons/Delete';
 import CloseIcon from 'material-ui-icons/Close';
 
 
@@ -35,6 +36,12 @@ class ArticleAppBar extends Component {
                             this.props.editIcon &&
                             <IconButton className="closeButton" color="secondary" aria-label="Artikel bearbeiten" onClick={() => this.props.enterEditMode() }>
                                 <EditIcon />
+                            </IconButton>
+                        }
+                        {
+                            this.props.deleteIcon &&
+                            <IconButton className="closeButton" color="secondary" aria-label="Artikel löschen" onClick={() => this.props.deleteArticle(true)}>
+                                <DeleteIcon />
                             </IconButton>
                         }
                         <IconButton className="closeButton" color="secondary" aria-label="Benachrichtigungen" onClick={() => { this.props.editMode ? this.props.cancleEdit() : this.props.rth === 'true' ? this.props.history.push('/') : this.props.mode === 'stufenbrett' ? this.props.history.push('/stufenbrett') : this.props.history.push('/archiv/' + this.props.mode) }}>

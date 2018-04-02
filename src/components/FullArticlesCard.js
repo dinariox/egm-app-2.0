@@ -70,7 +70,7 @@ class FullArticlesCard extends Component {
 
         }).catch(err => {
 
-            console.log('Error loading user data in OpenArticle:', err);
+            console.error('Error loading user data in OpenArticle:', err);
 
         });
 

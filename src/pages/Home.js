@@ -3,6 +3,9 @@ import 'typeface-roboto';
 
 import './../main.css';
 
+import imagebarImage1 from './../img/schoolRendering.jpg';
+import imagebarImage2 from './../img/sharensLogo.jpg';
+
 // MUI
 import CssBaseline from 'material-ui/CssBaseline';
 import { MuiThemeProvider } from 'material-ui/styles';
@@ -86,7 +89,7 @@ class Home extends Component {
 
                 <CssBaseline />
 
-                <EGMImageBar ref="appBar" title={this.state.pageTitle} date={this.state.currentDate} />
+                <EGMImageBar title={this.state.pageTitle} date={this.state.currentDate} images={[imagebarImage1, imagebarImage2]} />
                 
                 <WelcomeCard />
     

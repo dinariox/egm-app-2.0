@@ -18,9 +18,11 @@ import Stundenplan from "./pages/Stundenplan";
 import Mensa from "./pages/Mensa";
 import Einstellungen from "./pages/Einstellungen";
 import CreateArticle from "./pages/archiv/CreateArticle";
+import CreateStufenbrettEintrag from "./pages/stufenbrett/CreateStufenbrettEintrag";
 
 import { CircularProgress } from 'material-ui/Progress';
 import firebase from './firebase';
+
 
 const messaging = firebase.messaging();
 const db = firebase.database();
@@ -172,7 +174,9 @@ class App extends Component {
                         <Route path="/archiv/open/:mode/:articleID/:rth/:editMode" exact component={OpenArticle} />
                         <Route path="/archiv/create/:mode" exact component={CreateArticle} />
                         <Route path="/stufenbrett" exact component={Stufenbrett} />
-                        <Route path="/stufenbrett/open/:articleID" exact component={OpenStufenbrett} />
+                        <Route path="/stufenbrett/open/:stufe/:articleID" exact component={OpenStufenbrett} />
+                        <Route path="/stufenbrett/open/:stufe/:articleID/:editMode" exact component={OpenStufenbrett} />
+                        <Route path="/stufenbrett/create/:stufe" exact component={CreateStufenbrettEintrag} />
                         <Route path="/sharens" component={Sharens} />
                         <Route path="/stundenplan" exact component={Stundenplan} />
                         <Route path="/stundenplan/:reopen" component={Stundenplan} />

@@ -3,6 +3,9 @@ import 'typeface-roboto';
 
 import './../main.css';
 
+import imagebarImage1 from './../img/sharensLogo.jpg';
+import sharensImage from './../img/sharensTeam.jpg';
+
 // MUI
 import CssBaseline from 'material-ui/CssBaseline';
 import { MuiThemeProvider } from 'material-ui/styles';
@@ -24,7 +27,6 @@ import EGMImageBar from './../components/EGMImageBar';
 import WelcomeCard from './../components/WelcomeCard';
 import ArticlesCard from './../components/ArticlesCard';
 
-import sharensImage from './../img/sharensTeam.jpg';
 
 // Firebase References
 import firebase from './../firebase';
@@ -40,24 +42,8 @@ class Sharens extends Component {
 
         super();
         this.state = {
-            pageTitle: 'Sharens',
-            user: {
-                firstname: 'Timo',
-                lastname: 'Nowak',
-                stufe: 11
-            }
+            pageTitle: 'Sharens'
         };
-
-    }
-
-
-    componentDidMount() {
-
-        db.ref('/users/').orderByChild('uid').equalTo(auth.currentUser.uid).once('value').then((snapshot) => {
-
-            snapshot.forEach(val => { return val.val() });
-
-        })
 
     }
 
@@ -71,23 +57,23 @@ class Sharens extends Component {
 
                     <CssBaseline />
 
-                    <EGMImageBar ref="appBar" title={this.state.pageTitle} date={this.state.currentDate} sharens />
+                    <EGMImageBar title={this.state.pageTitle} images={[imagebarImage1]} />
 
                     <Card>
 
                         <CardContent>
 
-                            <Typography variant="headline">
+                            <Typography variant="headline" paragraph>
                                 Was ist sharens.info?
                             </Typography>
 
-                            <Typography paragraph>
+                            <Typography paragraph className="paragraphText">
                                 Sharens.info ist eine Internetplattform für Jugendliche, auf der man Erfahrungen über sein
                                 soziales Engagement (z.B. beim Diakonischen Praktikum oder dem diakonischen Baustein in
                                 der Klasse 8) teilen und sich mit anderen darüber austauschen kann. So kann man Kontakte
                                 mit anderen Jugendlichen knüpfen und voneinander lernen.
                             </Typography>
-                            <Typography>
+                            <Typography className="paragraphText">
                                 Des Weiteren gibt es die Möglichkeit sich über Stellen und Institutionen aus dem sozialen
                                 Bereich zu informieren und sich gegebenenfalls mit ihnen in Verbindung zu setzen.
                                 Außerdem gibt es auf der Seite Rat, falls man Anregungen oder Hilfe für diese Stellen
@@ -98,7 +84,7 @@ class Sharens extends Component {
 
                         <CardActions>
 
-                            <Button href="http://sharens.info" target="_blank" size="small">Sharens.info besuchen<ArrowIcon className="arrowIcon" /></Button>
+                            <Button style={{ color: '#4bbd14' }} href="http://sharens.info" target="_blank" size="small">Sharens.info besuchen<ArrowIcon className="arrowIcon" /></Button>
 
                         </CardActions>
 
@@ -110,16 +96,16 @@ class Sharens extends Component {
 
                         <CardContent>
 
-                            <Typography variant="headline">
+                            <Typography variant="headline" paragraph>
                                 Das Sharens-Team
                             </Typography>
 
-                            <Typography paragraph>
+                            <Typography paragraph className="paragraphText">
                                 Unser Team besteht momentan aus zwölf Mitarbeitern und drei betreuenden Lehrern.<br />
                                 Unsere Aufgabe ist die Instandhaltung und Weiterentwicklung bzw. - verbreitung der
                                 Website www.sharens.info .
                             </Typography>
-                            <Typography paragraph>
+                            <Typography paragraph className="paragraphText">
                                 Dazu arbeiten wir in fünf verschieden Abteilungen: Verwaltung, Finanzen,
                                 Marketing/Vertrieb, Design und IT-Verwaltung. Die Aufgaben der Verwaltung bestehen
                                 hauptsächlich darin den Schriftverkehr zu führen, die Mitgliederanteile zu verwalten sowie
@@ -135,7 +121,7 @@ class Sharens extends Component {
                                 Sicherheitsupdates, das Hochladen von Stellenanzeigen und die allgemeine Funktionalität
                                 der Website.
                             </Typography>
-                            <Typography>
+                            <Typography className="paragraphText">
                                 Momentan besteht der Vorstand aus folgenden drei Mitgliedern: Lara Eigner (EF), Erik
                                 Benger (Q2) und Mira Weiß (Q2). Betreut werden wir als gesamtes Team von den
                                 Lehrkräften Sabine Hegmann, Michael Hofmann und Bastian Händel.
@@ -150,11 +136,11 @@ class Sharens extends Component {
 
                         <CardContent>
 
-                            <Typography variant="headline">
+                            <Typography variant="headline" paragraph>
                                 Schau vorbei bei Sharens
                             </Typography>
 
-                            <Typography paragraph>
+                            <Typography paragraph className="paragraphText">
                                 Als erste Möglichkeit bieten sich die regelmäßigen
                                 Dienstagstreffen an, die in der sechsten Stunde beginnen. Die
                                 Treffen finden im Sharensraum (Raum 53, über dem
@@ -163,7 +149,7 @@ class Sharens extends Component {
                                 stattfindend. Die Termine dafür hängen am
                                 FUN/Sharensbrett aus - schaut doch einfach mal drauf.
                             </Typography>
-                            <Typography>
+                            <Typography className="paragraphText">
                                 Wir freuen uns immer über Leute, die mitarbeiten möchten.
                                 Bei weiteren Fragen könnt ihr natürlich auch Lara Eigner (EF),
                                 Erik Benger (Q2) oder Mira Weiß (Q2) als Vorstand, oder

@@ -126,6 +126,7 @@ class OpenArticle extends Component {
             loadingBarOpacity: 1,
             fabOpacity: 0,
             textOpacity: 0,
+            
             userIsAdmin: false,
             editMode: false,
 
@@ -150,7 +151,6 @@ class OpenArticle extends Component {
     componentDidMount() {
 
         this.loadArticle();
-
 
 
         // Hat der User Admin-Rechte?
@@ -208,7 +208,7 @@ class OpenArticle extends Component {
                     icon: article.icon || '',
                     iconColor: article.iconColor || '',
                     image: article.image || '',
-                    attachment: article.anhang || undefined
+                    attachments: article.anhänge || null
                 }
 
             });
@@ -559,7 +559,7 @@ class OpenArticle extends Component {
 
                 <div style={{ backgroundColor: '#fbfbfb', minHeight: '100vh' }}>
 
-                    <ArticleAppBar editMode={this.state.editMode} cancleEdit={() => this.cancleEdit()} editIcon={this.state.userIsAdmin && !this.state.editMode} enterEditMode={() => this.enterEditMode()} title={this.state.pageTitle} mode={this.props.match.params.mode} rth={this.props.match.params.rth} history={this.props.history} />
+                    <ArticleAppBar editMode={this.state.editMode} cancleEdit={() => this.cancleEdit()} editIcon={this.state.userIsAdmin && !this.state.editMode} deleteIcon={this.state.userIsAdmin && !this.state.editMode} deleteArticle={() => this.deleteArticle()} enterEditMode={() => this.enterEditMode()} title={this.state.pageTitle} mode={this.props.match.params.mode} rth={this.props.match.params.rth} history={this.props.history} />
                     <div className="appBarSpacer"></div>
 
                     {
@@ -585,22 +585,35 @@ class OpenArticle extends Component {
                                     {this.state.article.title}
                                 </Typography>
 
+                                <Typography paragraph variant="body1" style={{ whiteSpace: 'pre-line' }} className="paragraphText">
+                                    {this.state.article.text}
+                                </Typography>
+
                                 {
 
-                                    this.state.article.attachment ?
+                                    this.state.article.attachments ?
 
-                                        <Chip className="articleChip" avatar={<Avatar><FileDownloadIcon /></Avatar>} label={"'" + this.state.article.attachment + "' herunterladen"} />
+                                        <Fragment>
+                                            <Typography variant="caption" style={{ marginBottom: 8 }}>Anhänge</Typography>
+
+                                            {
+                                                this.state.article.attachments.map((attachment, index) => {
+
+                                                    return (
+
+                                                        <Chip onClick={() => {}} component="a" style={{ textDecoration: 'none', marginRight: 8 }} href={attachment.link} target="_blank" className="articleChip" avatar={<Avatar><FileDownloadIcon /></Avatar>} label={<span style={{ fontWeight: 500 }}>{attachment.name}</span>} />
+
+                                                    );
+
+                                                })
+                                            }
+                                        </Fragment>
 
                                         :
 
                                         null
 
                                 }
-
-
-                                <Typography variant="body1" style={{ whiteSpace: 'pre-line' }}>
-                                    {this.state.article.text}
-                                </Typography>
 
                             </div>
                         </div>

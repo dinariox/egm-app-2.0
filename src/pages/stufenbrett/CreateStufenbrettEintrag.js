@@ -15,9 +15,9 @@ import theme from './../../theme';
 import Typography from 'material-ui/Typography';
 import { LinearProgress } from 'material-ui/Progress';
 import Button from 'material-ui/Button';
-import Paper from 'material-ui/Paper';
 import TextField from 'material-ui/TextField';
 import Grid from 'material-ui/Grid';
+import Paper from 'material-ui/Paper';
 import Avatar from 'material-ui/Avatar';
 import Chip from 'material-ui/Chip';
 import Zoom from 'material-ui/transitions/Zoom';
@@ -103,29 +103,15 @@ const iconList = [
 ]
 
 
-
-class OpenStufenbrett extends Component {
+class CreateStufenbrettEintrag extends Component {
 
     constructor(props) {
 
         super(props);
 
         this.state = {
-            pageTitle: 'Stufenbrett-Eintrag',
-            article: {
-                id: 0,
-                title: '',
-                text: '',
-                date: '',
-                icon: '',
-                iconColor: ''
-            },
-            loadingBarOpacity: 1,
-            fabOpacity: 0,
-            textOpacity: 0,
-
+            pageTitle: 'Stufenbrett-Eintrag für Stufe ' + this.props.match.params.stufe + ' erstellen',
             userIsAdmin: false,
-            editMode: false,
 
             editID: 0,
             editTitle: '',
@@ -133,17 +119,17 @@ class OpenStufenbrett extends Component {
             editDate: '',
             editIcon: '',
             editIconColor: '',
+            editStufe: this.props.match.params.stufe,
 
             showUploadProgress: false,
             uploadStatus: '',
             uploadProgress: 0
+
         };
 
     }
 
     componentDidMount() {
-
-        this.loadArticle()
 
         // Hat der User Admin-Rechte?
 
@@ -155,96 +141,10 @@ class OpenStufenbrett extends Component {
 
         }).catch(err => {
 
-            console.log('Error loading user data in OpenArticle:', err);
+            console.log('Error loading user data in CreateStufebrettEintrag:', err);
 
         });
 
-    }
-
-
-    loadArticle() {
-
-        const articleID = parseInt(this.props.match.params.articleID);
-        const stufe = parseInt(this.props.match.params.stufe);
-
-        db.ref('stufenbrett/' + stufe).orderByChild('link').equalTo(articleID).once('value', snapshot => {
-
-            if (!snapshot.exists()) {
-
-                imageH = '0px';
-                this.setState({
-
-                    loadingBarOpacity: 0,
-                    article: {
-                        date: 'Fehler',
-                        title: 'Der Artikel exisitert nicht',
-                        text: 'Sorry, aber der Artikel, den du versucht hast zu laden, existiert nicht in der Datenbank 😕'
-                    }
-
-                });
-
-                return console.error('Artikel mit der ID ' + articleID + ' in Datenbank stufenbrett existiert nicht.');
-
-            }
-
-            const article = snapshot.val()[articleID];
-
-            this.setState({
-
-                article: {
-                    id: articleID,
-                    title: article.titel || 'Fehler',
-                    text: article.text.replace(/<br\s*\/?>/mg, "\n") || 'Fehler',
-                    date: article.datum || 'Fehler',
-                    icon: article.icon || '',
-                    iconColor: article.iconColor || '',
-                    attachment: article.anhang || undefined
-                }
-
-            });
-
-            if (article.image !== "" && article.image !== undefined) {
-
-                let aspectRatio = 16 / 9;
-                imageH = window.innerWidth / aspectRatio;
-                imageH = imageH >= 500 ? 500 : imageH;
-
-            } else {
-
-                imageH = '0px';
-                this.setState({
-
-                    loadingBarOpacity: 0
-
-                });
-
-            }
-
-            this.setState({
-
-                textOpacity: 1
-
-            });
-
-            // Wenn über die URL direkt in den edit Mode gesprungen werden soll (drei Punkte in der Liste -> Bearbeiten)
-            if (this.props.match.params.editMode) this.enterEditMode();
-
-        }).catch(error => {
-
-            this.setState({
-                loadingBarOpacity: 0,
-            });
-
-            console.error('Article loading error', error.message);
-
-        });
-
-    }
-
-
-    componentWillUnmount() {
-
-        imageH = 0;
 
     }
 
@@ -271,24 +171,7 @@ class OpenStufenbrett extends Component {
     }
 
 
-    enterEditMode() {
 
-        let { article } = this.state;
-
-        this.setState({
-            editMode: true,
-            editID: article.id,
-            editTitle: article.title,
-            editText: article.text,
-            editDate: article.date,
-            editIcon: article.icon,
-            editIconColor: article.iconColor,
-            editImage: article.image
-        });
-
-    }
-
-  
     checkValidFiletype(file) {
         var fileTypes = [
             'image/png',
@@ -384,9 +267,10 @@ class OpenStufenbrett extends Component {
         //         var newImgUrl = uploadTask.snapshot.downloadURL
 
         //         this.setState({
-        //             uploadStatus: 'Änderungen werden angewandt...'
+        //             uploadStatus: 'Text wird hochgeladen...'
         //         });
 
+        //         let newId = new Date().getTime();
 
         //         let updateInfo = {
         //             titel: this.state.editTitle,
@@ -394,10 +278,11 @@ class OpenStufenbrett extends Component {
         //             datum: this.state.editDate,
         //             icon: this.state.editIcon,
         //             iconColor: this.state.editIconColor,
-        //             link: this.state.editID
+        //             image: newImgUrl,
+        //             link: newId
         //         }
 
-        //         db.ref('stufenbrett/' + this.props.match.params.stufe + '/' + this.state.editID).update(updateInfo).then(() => {
+        //         db.ref(this.props.match.params.mode + '/' + newId).set(updateInfo).then(() => {
 
         //             this.setState({
 
@@ -410,12 +295,11 @@ class OpenStufenbrett extends Component {
         //                 editText: '',
         //                 editDate: '',
         //                 editIcon: '',
-        //                 editIconColor: '',
-        //                 editMode: false
+        //                 editIconColor: ''
 
         //             });
 
-        //             return alert('Der Artikel wurde erfolgreich aktualisiert'), this.props.history.push('/stufenbrett');
+        //             return alert('Der Artikel wurde erfolgreich veröffentlicht'), this.props.history.push('/archiv/' + this.props.match.params.mode);
 
         //         }).catch((error) => {
         //             this.setState({
@@ -437,9 +321,11 @@ class OpenStufenbrett extends Component {
             this.setState({
 
                 showUploadProgress: true,
-                uploadStatus: 'Änderungen werden angewandt...'
+                uploadStatus: 'Text wird hochgeladen...'
 
             });
+
+            let newId = new Date().getTime();
 
             let updateInfo = {
                 titel: this.state.editTitle,
@@ -447,10 +333,10 @@ class OpenStufenbrett extends Component {
                 datum: this.state.editDate,
                 icon: this.state.editIcon,
                 iconColor: this.state.editIconColor,
-                link: this.state.editID
+                link: newId
             }
 
-            db.ref('stufenbrett/' + this.props.match.params.stufe + '/' + this.state.editID).update(updateInfo).then(() => {
+        db.ref('stufenbrett/' + this.props.match.params.stufe + '/' + newId).set(updateInfo).then(() => {
 
                 this.setState({
 
@@ -463,12 +349,11 @@ class OpenStufenbrett extends Component {
                     editText: '',
                     editDate: '',
                     editIcon: '',
-                    editIconColor: '',
-                    editMode: false
+                    editIconColor: ''
 
                 })
 
-                return alert('Der Artikel wurde erfolgreich aktualisiert'), this.props.history.push('/stufenbrett');
+                return alert('Der Artikel wurde erfolgreich veröffentlicht'), this.props.history.push('/stufenbrett');
 
             }).catch((error) => {
                 this.setState({
@@ -483,7 +368,7 @@ class OpenStufenbrett extends Component {
                 return alert('Sorry, etwas ist schiefgelaufen');
             });
 
-        //}
+        // }
 
     }
 
@@ -504,36 +389,12 @@ class OpenStufenbrett extends Component {
                 editIconColor: ''
             });
 
-        }
-
-    }
-
-    deleteArticle(deleteFromWithinArticle) {
-
-        let confirmDelete = window.confirm('Möchtest du den Artikel wirklich löschen?');
-
-        if (confirmDelete) {
-
-            db.ref('stufenbrett/' + this.props.match.params.stufe + '/' + this.props.match.params.articleID).remove().then(() => {
-
-                if (deleteFromWithinArticle) {
-                    this.props.history.push('/stufenbrett');
-                } else {
-                    this.loadArticle();
-                }
-                
-
-                return alert('Der Artikel wurde erfolgreich gelöscht');
-
-            }).catch(error => {
-
-                return alert('Der Artikel konnte nicht gelöscht werden\n\n' + error.message);
-
-            });
+            this.props.history.push('/stufenbrett');
 
         }
 
     }
+
 
     render() {
 
@@ -544,84 +405,16 @@ class OpenStufenbrett extends Component {
 
                 <div style={{ backgroundColor: '#fbfbfb', minHeight: '100vh' }}>
 
-                    <ArticleAppBar editMode={this.state.editMode} cancleEdit={() => this.cancleEdit()} editIcon={this.state.userIsAdmin && !this.state.editMode} deleteIcon={this.state.userIsAdmin && !this.state.editMode} deleteArticle={() => this.deleteArticle()} enterEditMode={() => this.enterEditMode()} title={this.state.pageTitle} mode='stufenbrett' rth={this.props.match.params.rth} history={this.props.history} />
+                    <ArticleAppBar editMode={true} cancleEdit={() => this.cancleEdit()} title={this.state.pageTitle} mode={this.props.match.params.mode} rth={this.props.match.params.rth} history={this.props.history} />
                     <div className="appBarSpacer"></div>
 
                     {
-                        this.state.editMode ||
-
-                        <div>
-
-                            <LinearProgress className="imageLoadingBar" style={{ opacity: this.state.loadingBarOpacity }} />
-
-                            <div className="articleTextWrapper" style={{ opacity: this.state.textOpacity }}>
-
-                                <Typography variant="caption">
-                                    {this.state.article.date}
-                                </Typography>
-
-                                <Typography variant="headline" className="articleTitle">
-                                    {this.state.article.title}
-                                </Typography>
-
-                                <Typography paragraph variant="body1" style={{ whiteSpace: 'pre-line' }} className="paragraphText">
-                                    {this.state.article.text}
-                                </Typography>
-
-                                {
-
-                                    this.state.article.attachments ?
-
-                                        <Fragment>
-                                            <Typography variant="caption" style={{ marginBottom: 8 }}>Anhänge</Typography>
-
-                                            {
-                                                this.state.article.attachments.map((attachment, index) => {
-
-                                                    return (
-
-                                                        <Chip onClick={() => { }} component="a" style={{ textDecoration: 'none', marginRight: 8 }} href={attachment.link} target="_blank" className="articleChip" avatar={<Avatar><FileDownloadIcon /></Avatar>} label={<span style={{ fontWeight: 500 }}>{attachment.name}</span>} />
-
-                                                    );
-
-                                                })
-                                            }
-                                        </Fragment>
-
-                                        :
-
-                                        null
-
-                                }
-
-                            </div>
-                        </div>
-
-                    }
-
-
-                    {/* EDIT MODE */}
-
-                    {
-                        this.state.editMode &&
+                        this.state.userIsAdmin &&
 
                         <div>
 
 
                             <Grid container spacing={16} style={{ padding: 16 }}>
-
-                                <Grid item xs={12} sm={2}>
-
-                                    <TextField
-                                        disabled
-                                        margin="none"
-                                        id="editID"
-                                        label="ID"
-                                        value={this.state.editID}
-                                        fullWidth
-                                    />
-
-                                </Grid>
 
                                 <Grid item xs={12} sm={10}>
 
@@ -692,13 +485,13 @@ class OpenStufenbrett extends Component {
                                         ))}
                                     </GridList>
                                 </div>
-
+                                
 
                             </Grid>
 
 
 
-                            <Zoom in={this.state.editMode && this.state.userIsAdmin}>
+                            <Zoom in={this.state.userIsAdmin}>
                                 <Button variant="fab" className="stundenplanFAB" style={{ backgroundColor: '#4CAF50' }} onClick={() => this.uploadChanges()}>
                                     <DoneIcon />
                                 </Button>
@@ -714,7 +507,7 @@ class OpenStufenbrett extends Component {
                         aria-labelledby="simple-modal-title"
                         open={this.state.showUploadProgress}
                     >
-                        <DialogTitle id="form-dialog-title">Artikel aktualisieren...</DialogTitle>
+                        <DialogTitle id="form-dialog-title">Artikel veröffentlichen...</DialogTitle>
                         <DialogContent>
                             <LinearProgress variant="determinate" value={this.state.uploadProgress} />
                             <DialogContentText>
@@ -722,7 +515,6 @@ class OpenStufenbrett extends Component {
                             </DialogContentText>
                         </DialogContent>
                     </Dialog>
-
 
 
                 </div>
@@ -760,4 +552,4 @@ function ArticleIcon(props) {
 }
 
 
-export default OpenStufenbrett;
+export default CreateStufenbrettEintrag;
