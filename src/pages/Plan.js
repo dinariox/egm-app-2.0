@@ -50,7 +50,7 @@ class Plan extends Component {
         super();
         this.state = {
             pageTitle: 'Vertretungsplan',
-            userStufe: 'Q1',
+            userNoStufe: false,
             modeValue: 0,
             growC: true,
             growN: false,
@@ -75,6 +75,28 @@ class Plan extends Component {
 
     componentDidMount() {
 
+        db.ref('/users/').orderByChild('uid').equalTo(auth.currentUser.uid).once('value').then(snapshot => {
+
+            let data = snapshot.val();
+            let userInfo = data[Object.keys(data)[0]];
+
+            if (!userInfo.stufe) {
+                return this.setState({ userNoStufe: true });
+            }
+
+            if (userInfo.stufe === '10') userInfo.stufe = 'EF';
+            if (userInfo.stufe === '11') userInfo.stufe = 'Q1';
+            if (userInfo.stufe === '12') userInfo.stufe = 'Q2';
+
+            this.loadVertretungsplan(userInfo.stufe);
+
+        });
+
+    }
+
+
+    loadVertretungsplan(userStufe) {
+
         db.ref('/vertretungsplan/currentDay/abwesendeLehrer').once('value')
             .then(snapshot => {
 
@@ -83,7 +105,7 @@ class Plan extends Component {
 
             });
 
-        db.ref('/vertretungsplan/currentDay/vertretungen/' + this.state.userStufe).once('value')
+        db.ref('/vertretungsplan/currentDay/vertretungen/' + userStufe).once('value')
             .then(snapshot => {
 
                 let vertretungen = snapshot.val();
@@ -113,7 +135,7 @@ class Plan extends Component {
 
             });
 
-        db.ref('/vertretungsplan/nextDay/vertretungen/' + this.state.userStufe).once('value')
+        db.ref('/vertretungsplan/nextDay/vertretungen/' + userStufe).once('value')
             .then(snapshot => {
 
                 let vertretungen = snapshot.val();

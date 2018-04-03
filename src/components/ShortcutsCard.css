@@ -1,0 +1,37 @@
+
+.shortcutCard {
+
+    margin-bottom: 12px;
+    min-height: 75px;
+
+}
+
+.shortcutLoadingCircle {
+
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+
+}
+
+.shortcutGridItem {
+
+    text-align: center;
+
+}
+
+@keyframes fade-in {
+
+    0% { opacity: 0; }
+
+    100% { opacity: 1; }
+
+}
+
+@keyframes fade-out {
+
+    0% { opacity: 1; }
+
+    100% { opacity: 0; }
+
+}

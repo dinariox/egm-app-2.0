@@ -21,6 +21,7 @@ import theme from './../theme';
 import EGMImageBar from './../components/EGMImageBar';
 import WelcomeCard from './../components/WelcomeCard';
 import ArticlesCard from './../components/ArticlesCard';
+import ShortcutsCard from './../components/ShortcutsCard';
 
 // Firebase References
 import firebase from './../firebase';
@@ -92,6 +93,8 @@ class Home extends Component {
                 <EGMImageBar title={this.state.pageTitle} date={this.state.currentDate} images={[imagebarImage1, imagebarImage2]} />
                 
                 <WelcomeCard />
+
+                <ShortcutsCard />
     
                 <div className="articleCardsWrapper">
                 

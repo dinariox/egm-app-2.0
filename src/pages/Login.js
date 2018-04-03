@@ -278,7 +278,7 @@ class Login extends Component {
             return;
         }
 
-        if (parseInt(this.state.userRegisterStufe) < 5 || parseInt(this.state.userRegisterStufe) > 12) {
+        if ((parseInt(this.state.userRegisterStufe) < 5 || parseInt(this.state.userRegisterStufe) > 12) && this.state.userRegisterStufe !== 'lehrer') {
             this.setState({ stufenpasswortLoading: false, errorRegisterMessage: 'Eingegebene Stufe ungültig!', errorRegisterStufenpasswort: true });
             return;
         }
@@ -542,7 +542,7 @@ class Login extends Component {
                         <TextField
                             error={this.state.errorRegisterStufe}
                             id="userRegisterStufe"
-                            label="Stufe (5-12)"
+                            label="Stufe (5-12 / lehrer)"
                             type="text"
                             className="registerTextbox"
                             value={this.state.userRegisterStufe}
