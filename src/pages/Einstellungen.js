@@ -26,12 +26,14 @@ import Dialog, {
 } from 'material-ui/Dialog';
 import Typography from 'material-ui/Typography';
 import { LinearProgress, CircularProgress } from 'material-ui/Progress';
+import Radio, { RadioGroup } from 'material-ui/Radio';
 
 import EditIcon from 'material-ui-icons/Edit';
 import StarIcon from 'material-ui-icons/Star';
 import AccessibilityIcon from 'material-ui-icons/Accessibility';
 import PhotoIcon from 'material-ui-icons/PhotoCamera';
 import TodayIcon from 'material-ui-icons/Today';
+import FavoriteIcon from 'material-ui-icons/Favorite';
 
 
 // Own components
@@ -45,6 +47,18 @@ import firebase from './../firebase';
 const db = firebase.database();
 const auth = firebase.auth();
 const storage = firebase.storage();
+
+
+const shortcutOptions = [
+    { label: 'Vertretungsplan', value: 'vertretungsplan' },
+    { label: 'Stundenplan', value: 'stundenplan' },
+    { label: 'Kalender', value: 'kalender' },
+    { label: 'Stufenbrett', value: 'stufenbrett' },
+    { label: 'Mensa', value: 'mensa' },
+    { label: 'Archiv: News', value: 'news' },
+    { label: 'Archiv: SV', value: 'sv' },
+    { label: 'Archiv: Schulleitung', value: 'schulleitung' }
+];
 
 
 
@@ -70,7 +84,13 @@ class Einstellungen extends Component {
             showUploadProgress: false,
 
             settingsLoaded: false,
-            hasStundenplan: false
+            hasStundenplan: false,
+
+            showShortcutDialog1: false,
+            showShortcutDialog2: false,
+
+            shortcut1: '',
+            shortcut2: ''
         };
 
     }
@@ -92,19 +112,36 @@ class Einstellungen extends Component {
 
             }
 
-            if (!preferences) {
+            if (!preferences.shortcut1 || !preferences.shortcut2) {
 
-                let refToSettings = '/users/' + snapshot.ref.path.pieces_[1] + '/preferences/defaultStundenplanDayView'
+                let refToSettings = '/users/' + snapshot.ref.path.pieces_[1] + '/preferences'
 
-                db.ref(refToSettings).set(false);
+                db.ref(refToSettings).update({
+                    shortcut1: 'vertretungsplan',
+                    shortcut2: 'stundenplan'
+                });
 
-                return this.setState({ settingsLoaded: true });
+                return this.setState({
+                    settingsLoaded: true, shortcut1: 'vertretungsplan', shortcut2: 'stundenplan'
+                });
 
             }
 
+            if (preferences.defaultStundenplanDayView === undefined) {
+
+                let refToSettings = '/users/' + snapshot.ref.path.pieces_[1] + '/preferences'
+
+                db.ref(refToSettings).update({
+                    defaultStundenplanDayView: false
+                });
+
+                return this.setState({ settingsLoaded: true, shortcut1: 'vertretungsplan', shortcut2: 'stundenplan' });
+
+            }   
+
             let defaultStundenplanDayView = preferences.defaultStundenplanDayView;
 
-            this.setState({ checkedSettings: defaultStundenplanDayView ? ['defaultToDayView'] : [], settingsLoaded: true });
+            this.setState({ checkedSettings: defaultStundenplanDayView ? ['defaultToDayView'] : [], shortcut1: preferences.shortcut1, shortcut2: preferences.shortcut2, settingsLoaded: true });
 
         });
 
@@ -148,6 +185,23 @@ class Einstellungen extends Component {
     }
 
 
+    changeShortcut(shortcut, value) {
+
+        this.setState({ [shortcut]: value, showShortcutDialog1: false, showShortcutDialog2: false });
+
+        db.ref("/users/").orderByChild("uid").equalTo(auth.currentUser.uid).once("child_added", snapshot => {
+
+            let refToSettings = '/users/' + snapshot.ref.path.pieces_[1] + '/preferences/'
+
+            db.ref(refToSettings).update({
+                [shortcut]: value
+            });
+
+        });
+
+    }
+
+    
     switchStufe() {
 
         if (this.state.newStufe === '') {
@@ -349,6 +403,24 @@ class Einstellungen extends Component {
     }
 
 
+    shortcutValueToDisplayName(value) {
+
+        const names = {
+            vertretungsplan: 'Vertretungsplan',
+            stundenplan: 'Stundenplan',
+            kalender: 'Kalender',
+            stufenbrett: 'Stufenbrett',
+            mensa: 'Mensa',
+            news: 'Archiv: News',
+            sv: 'Archiv: SV',
+            schulleitung: 'Archiv: Schulleitung'
+        }
+
+        return names[value] || 'Lädt...';
+
+    }
+
+
     render() {
         return (
 
@@ -364,17 +436,26 @@ class Einstellungen extends Component {
 
                     <List subheader={<ListSubheader>Allgemein</ListSubheader>}>
 
-                        <ListItem button onClick={this.handleToggle('wifi')} disabled>
+                        <ListItem button onClick={() => this.handleClickOpen('showShortcutDialog1')} disabled={!this.state.shortcut1}>
                             <ListItemIcon>
-                                <AccessibilityIcon />
+                                {this.state.shortcut1 ?
+                                    <FavoriteIcon />
+                                    :
+                                    <CircularProgress size={24} />
+                                }
                             </ListItemIcon>
-                            <ListItemText primary="Nur ein Test" />
-                            <ListItemSecondaryAction>
-                                <Switch disabled color="primary"
-                                    onChange={this.handleToggle('wifi')}
-                                    checked={this.state.checkedSettings.indexOf('wifi') !== -1}
-                                />
-                            </ListItemSecondaryAction>
+                            <ListItemText primary="Shortcut 1 ändern" secondary={this.shortcutValueToDisplayName(this.state.shortcut1)} />
+                        </ListItem>
+
+                        <ListItem button onClick={() => this.handleClickOpen('showShortcutDialog2')} disabled={!this.state.shortcut2}>
+                            <ListItemIcon>
+                                {this.state.shortcut2 ?
+                                    <FavoriteIcon />
+                                    :
+                                    <CircularProgress size={24} />
+                                }
+                            </ListItemIcon>
+                            <ListItemText primary="Shortcut 2 ändern" secondary={this.shortcutValueToDisplayName(this.state.shortcut2)} />
                         </ListItem>
 
                     </List>
@@ -566,6 +647,21 @@ class Einstellungen extends Component {
                 </Dialog>
 
 
+
+                {/* CHANGE SHORTCUT */}
+                { this.state.shortcut1 && <ChangeShortcutDialog
+                    open={this.state.showShortcutDialog1}
+                    onClose={value => this.changeShortcut('shortcut1', value)}
+                    value={this.state.shortcut1}
+                /> }
+
+                { this.state.shortcut2 &&<ChangeShortcutDialog
+                    open={this.state.showShortcutDialog2}
+                    onClose={value => this.changeShortcut('shortcut2', value)}
+                    value={this.state.shortcut2}
+                /> }
+
+
             </MuiThemeProvider>
 
 
@@ -574,6 +670,89 @@ class Einstellungen extends Component {
     }
 }
 
+
+
+class ChangeShortcutDialog extends Component {
+
+    constructor(props, context) {
+        super(props, context);
+
+        this.state.value = this.props.value;
+    }
+
+
+    state = {};
+
+
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.value !== this.props.value) {
+            this.setState({ value: nextProps.value });
+        }
+    }
+
+    radioGroup = null;
+
+    handleEntering = () => {
+        this.radioGroup.focus();
+    };
+
+    handleCancel = () => {
+        this.props.onClose(this.props.value);
+    };
+
+    handleOk = () => {
+        this.props.onClose(this.state.value);
+    };
+
+    handleChange = (event, value) => {
+        this.setState({ value });
+    };
+
+    render() {
+
+        const { value, ...other } = this.props;
+
+        return (
+
+            <Dialog
+                disableBackdropClick
+                disableEscapeKeyDown
+                maxWidth = "xs"
+                onEntering = { this.handleEntering }
+                aria-labelledby="confirmation-dialog-title"
+                {...other }
+            >
+                <DialogTitle id="confirmation-dialog-title">Shortcut auswählen</DialogTitle>
+                <DialogContent>
+                    <RadioGroup
+                        ref={node => {
+                            this.radioGroup = node;
+                        }}
+                        aria-label="shortcut"
+                        name="shortcut"
+                        value={this.state.value}
+                        onChange={this.handleChange}
+                    >
+                        {shortcutOptions.map(option => (
+                            <FormControlLabel value={option.value} key={option.value} control={<Radio color="primary" />} label={option.label} />
+                        ))}
+                    </RadioGroup>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={this.handleCancel} color="primary">
+                        Cancel
+                    </Button>
+                    <Button onClick={this.handleOk} color="primary">
+                        Ok
+                    </Button>
+                </DialogActions>
+            </Dialog >
+
+        );
+
+    }
+
+}
 
 
 

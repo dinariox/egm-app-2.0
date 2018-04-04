@@ -63,13 +63,13 @@ class EGMAppBar extends Component {
 
         if (this.props.imageMode) {
 
-            this.state = { background: 'linear-gradient(to bottom, rgba(0,0,0,0.15) 0%,rgba(0,0,0,0.15) 15%,rgba(0,0,0,0) 100%)', shadow: 'none', transition: 'background 200ms, box-shadow 200ms', transparent: true, checkedNotifications: false};
+            this.state = { background: 'linear-gradient(to bottom, rgba(0,0,0,0.15) 0%,rgba(0,0,0,0.15) 15%,rgba(0,0,0,0) 100%)', shadow: 'none', transition: 'background 200ms, box-shadow 200ms', transparent: true, checkedNotifications: false, openNotifications: false };
 
             this.checkScroll = this.checkScroll.bind(this);
 
         } else {
 
-            this.state = {background: primaryColor, shadow: '', checkedNotifications: false};
+            this.state = { background: primaryColor, shadow: '', checkedNotifications: false, openNotifications: false };
 
         }
 

@@ -12,11 +12,14 @@ import theme from './../theme';
 
 
 // MUI Components
+import Typography from 'material-ui/Typography';
 import ListSubheader from 'material-ui/List/ListSubheader';
 import List, { ListItem, ListItemText, ListItemSecondaryAction, ListItemIcon} from 'material-ui/List';
 import Avatar from 'material-ui/Avatar';
 import IconButton from 'material-ui/IconButton';
 import Menu, { MenuItem } from 'material-ui/Menu';
+import Paper from 'material-ui/Paper';
+import Slide from 'material-ui/transitions/Slide';
 
 import MenuIcon from 'material-ui-icons/MoreVert';
 import NotificationsIcon from 'material-ui-icons/Notifications';
@@ -122,7 +125,7 @@ class Home extends Component {
 
     componentDidMount() {
 
-
+        
 
     }
 
@@ -154,32 +157,29 @@ class Home extends Component {
 
                     <div className="appBarSpacer"></div>
 
-                    <List className="calenderList" subheader={<div />}>
-                        {this.state.calenderEvents.map((monthObj, index1) => (
-                             <div key={`section-${index1}`} className="calenderListItem">
-                                <ListSubheader className="monthSubheader">{`${monthObj.month}`}</ListSubheader>
-                                {monthObj.events.map((event, index2) => (
-                                    <ListItem key={`item-${index1}-${index2}`}>
-                                        <Avatar style={{ borderColor: index2 % 2 === 0 ? '#1565C0' : '#EF5350' }} className="dateAvatar">
-                                            {event.date}
-                                        </Avatar>
-                                        <ListItemText primary={event.title} secondary={event.info} />
-                                        <ListItemSecondaryAction>
-                                            <IconButton aria-label="Delete">
-                                                <MenuIcon
-                                                    aria-owns={this.state.anchorEl ? 'simple-menu' : null}
-                                                    aria-haspopup="true"
-                                                    onClick={this.handleClick}
-                                                />
-                                            </IconButton>
-                                            
-                                        </ListItemSecondaryAction>
-                                        
-                                    </ListItem>
-                                ))}
-                            </div>
-                        ))}
-                    </List>
+                    {this.state.calenderEvents.map((monthObj, index1) => (
+                        <div key={`section-${index1}`} className="calenderListItem">
+
+                            <Typography variant="subheading" style={{ textAlign: 'center', marginTop: 12 }}>{monthObj.month}</Typography>
+
+                            {monthObj.events.map((event, index2) => (
+                                <Paper elevation={4} style={{ margin: 8, padding: 16, position: 'relative', backgroundColor: index2 % 2 === 0 ? '#64B5F6' : '#E57373' }} key={`item-${index1}-${index2}`}>
+                                    
+                                    <Typography variant="subheading" style={{ fontSize: '14pt' }}><b style={{ fontSize: '16pt' }}>{event.date}.</b>&nbsp;{event.title}</Typography>
+                                    <Typography>{event.info}</Typography>
+
+                                    <IconButton aria-label="Delete" style={{ position: 'absolute', top: 4, right: 0 }}>
+                                        <MenuIcon
+                                            aria-owns={this.state.anchorEl ? 'simple-menu' : null}
+                                            aria-haspopup="true"
+                                            onClick={this.handleClick}
+                                        />
+                                    </IconButton>
+                                    
+                                </Paper>
+                            ))}
+                        </div>
+                    ))}
 
                     <Menu
                         id="simple-menu"

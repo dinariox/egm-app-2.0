@@ -7,6 +7,7 @@ import List, { ListItem, ListItemText } from 'material-ui/List';
 import Avatar from 'material-ui/Avatar';
 import Typography from 'material-ui/Typography';
 import { CircularProgress } from 'material-ui/Progress';
+import Collapse from 'material-ui/transitions/Collapse';
 
 import ArrowIcon from 'material-ui-icons/NavigateNext';
 import NotInterestedIcon from 'material-ui-icons/NotInterested';
@@ -120,92 +121,94 @@ class ArticlesCard extends Component {
 
         return (
 
-            <Card className="articlesCard">
+            <Collapse in={this.state.articlesLoaded} collapsedHeight="194px">
+                <Card className="articlesCard">
 
-                <CardContent className="articleContent">
+                    <CardContent className="articleContent">
 
-                    <Typography variant="subheading">{this.props.heading}</Typography>
+                        <Typography variant="subheading">{this.props.heading}</Typography>
 
-                </CardContent>
+                    </CardContent>
 
-                <div className="articlesListWrapper">
+                    <div className="articlesListWrapper">
 
-                    {this.state.articlesLoaded ?
+                        {this.state.articlesLoaded ?
 
-                        this.props.mode === 'news' ?
-
-                            <List className="articleList">
-                                <ListItem button component={Link} to={{ pathname: '/archiv/open/' + this.props.mode + '/' + this.state.news[0].link + '/true' }}>
-                                    <Avatar style={{ backgroundColor: this.state.news[0].iconColor || 'Fehler' }}>
-                                        <ArticleIcon icon={this.state.news[0].icon || 'Fehler'} />
-                                    </Avatar>
-                                    <ListItemText primary={this.state.news[0].titel || 'Fehler'} secondary={this.state.news[0].datum || 'Fehler'} />
-                                </ListItem>
-                                <ListItem button component={Link} to={{ pathname: '/archiv/open/' + this.props.mode + '/' + this.state.news[1].link + '/true' }}>
-                                    <Avatar style={{ backgroundColor: this.state.news[1].iconColor || 'Fehler' }}>
-                                        <ArticleIcon icon={this.state.news[1].icon || 'Fehler'} />
-                                    </Avatar>
-                                    <ListItemText primary={this.state.news[1].titel || 'Fehler'} secondary={this.state.news[1].datum || 'Fehler'} />
-                                </ListItem>
-                            </List>
-
-                            :
-
-                            this.props.mode === 'sv' ?
+                            this.props.mode === 'news' ?
 
                                 <List className="articleList">
-                                    <ListItem button component={Link} to={{ pathname: '/archiv/open/' + this.props.mode + '/' + this.state.sv[0].link + '/true' }}>
-                                        <Avatar style={{ backgroundColor: this.state.sv[0].iconColor || '' }}>
-                                            <ArticleIcon icon={this.state.sv[0].icon || ''} />
+                                    <ListItem button component={Link} to={{ pathname: '/archiv/open/' + this.props.mode + '/' + this.state.news[0].link + '/true' }}>
+                                        <Avatar style={{ backgroundColor: this.state.news[0].iconColor || 'Fehler' }}>
+                                            <ArticleIcon icon={this.state.news[0].icon || 'Fehler'} />
                                         </Avatar>
-                                        <ListItemText primary={this.state.sv[0].titel || 'Fehler'} secondary={this.state.sv[0].datum || 'Fehler'} />
+                                        <ListItemText primary={this.state.news[0].titel || 'Fehler'} secondary={this.state.news[0].datum || 'Fehler'} />
                                     </ListItem>
-                                    <ListItem button component={Link} to={{ pathname: '/archiv/open/' + this.props.mode + '/' + this.state.sv[1].link + '/true' }}>
-                                        <Avatar style={{ backgroundColor: this.state.sv[1].iconColor || '' }}>
-                                            <ArticleIcon icon={this.state.sv[1].icon || ''} />
+                                    <ListItem button component={Link} to={{ pathname: '/archiv/open/' + this.props.mode + '/' + this.state.news[1].link + '/true' }}>
+                                        <Avatar style={{ backgroundColor: this.state.news[1].iconColor || 'Fehler' }}>
+                                            <ArticleIcon icon={this.state.news[1].icon || 'Fehler'} />
                                         </Avatar>
-                                        <ListItemText primary={this.state.sv[1].titel || 'Fehler'} secondary={this.state.sv[1].datum || 'Fehler'} />
+                                        <ListItemText primary={this.state.news[1].titel || 'Fehler'} secondary={this.state.news[1].datum || 'Fehler'} />
                                     </ListItem>
                                 </List>
 
                                 :
 
-                                this.props.mode === 'schulleitung' ?
+                                this.props.mode === 'sv' ?
 
                                     <List className="articleList">
-                                        <ListItem button component={Link} to={{ pathname: '/archiv/open/' + this.props.mode + '/' + this.state.schulleitung[0].link + '/true' }}>
-                                            <Avatar style={{ backgroundColor: this.state.schulleitung[0].iconColor || 'Fehler' }}>
-                                                <ArticleIcon icon={this.state.schulleitung[0].icon || ''} />
+                                        <ListItem button component={Link} to={{ pathname: '/archiv/open/' + this.props.mode + '/' + this.state.sv[0].link + '/true' }}>
+                                            <Avatar style={{ backgroundColor: this.state.sv[0].iconColor || '' }}>
+                                                <ArticleIcon icon={this.state.sv[0].icon || ''} />
                                             </Avatar>
-                                            <ListItemText primary={this.state.schulleitung[0].titel || 'Fehler'} secondary={this.state.schulleitung[0].datum || 'Fehler'} />
+                                            <ListItemText primary={this.state.sv[0].titel || 'Fehler'} secondary={this.state.sv[0].datum || 'Fehler'} />
                                         </ListItem>
-                                        <ListItem button component={Link} to={{ pathname: '/archiv/open/' + this.props.mode + '/' + this.state.schulleitung[1].link + '/true' }}>
-                                            <Avatar style={{ backgroundColor: this.state.schulleitung[1].iconColor || 'Fehler' }}>
-                                                <ArticleIcon icon={this.state.schulleitung[1].icon || 'Fehler'} />
+                                        <ListItem button component={Link} to={{ pathname: '/archiv/open/' + this.props.mode + '/' + this.state.sv[1].link + '/true' }}>
+                                            <Avatar style={{ backgroundColor: this.state.sv[1].iconColor || '' }}>
+                                                <ArticleIcon icon={this.state.sv[1].icon || ''} />
                                             </Avatar>
-                                            <ListItemText primary={this.state.schulleitung[1].titel || 'Fehler'} secondary={this.state.schulleitung[1].datum || 'Fehler'} />
+                                            <ListItemText primary={this.state.sv[1].titel || 'Fehler'} secondary={this.state.sv[1].datum || 'Fehler'} />
                                         </ListItem>
                                     </List>
 
                                     :
 
-                                    null
+                                    this.props.mode === 'schulleitung' ?
 
-                        :
+                                        <List className="articleList">
+                                            <ListItem button component={Link} to={{ pathname: '/archiv/open/' + this.props.mode + '/' + this.state.schulleitung[0].link + '/true' }}>
+                                                <Avatar style={{ backgroundColor: this.state.schulleitung[0].iconColor || 'Fehler' }}>
+                                                    <ArticleIcon icon={this.state.schulleitung[0].icon || ''} />
+                                                </Avatar>
+                                                <ListItemText primary={this.state.schulleitung[0].titel || 'Fehler'} secondary={this.state.schulleitung[0].datum || 'Fehler'} />
+                                            </ListItem>
+                                            <ListItem button component={Link} to={{ pathname: '/archiv/open/' + this.props.mode + '/' + this.state.schulleitung[1].link + '/true' }}>
+                                                <Avatar style={{ backgroundColor: this.state.schulleitung[1].iconColor || 'Fehler' }}>
+                                                    <ArticleIcon icon={this.state.schulleitung[1].icon || 'Fehler'} />
+                                                </Avatar>
+                                                <ListItemText primary={this.state.schulleitung[1].titel || 'Fehler'} secondary={this.state.schulleitung[1].datum || 'Fehler'} />
+                                            </ListItem>
+                                        </List>
 
-                        <CircularProgress className="articlesLoadingCircle" style={{ color: this.props.loadColor }} />
+                                        :
 
-                    }
+                                        null
 
-                </div>
+                            :
 
-                <CardActions>
+                            <CircularProgress className="articlesLoadingCircle" style={{ color: this.props.loadColor }} />
 
-                    <Button size="small" onClick={() => { this.props.history.push('/archiv/' + this.props.mode) }}>Mehr lesen<ArrowIcon className="arrowIcon" /></Button>
+                        }
 
-                </CardActions>
+                    </div>
 
-            </Card>
+                    <CardActions>
+
+                        <Button size="small" onClick={() => { this.props.history.push('/archiv/' + this.props.mode) }}>Mehr lesen<ArrowIcon className="arrowIcon" /></Button>
+
+                    </CardActions>
+
+                </Card>
+            </Collapse>
 
         );
 
