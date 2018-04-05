@@ -136,7 +136,9 @@ class OpenStufenbrett extends Component {
 
             showUploadProgress: false,
             uploadStatus: '',
-            uploadProgress: 0
+            uploadProgress: 0,
+
+            textSize: '11.2'
         };
 
     }
@@ -151,7 +153,7 @@ class OpenStufenbrett extends Component {
 
             let data = snapshot.val();
             let userInfo = data[Object.keys(data)[0]]
-            this.setState({ userIsAdmin: userInfo.admin || userInfo.stufe === 'lehrer' ? true : false });
+            this.setState({ userIsAdmin: userInfo.admin || userInfo.stufe === 'lehrer' ? true : false, textSize: userInfo.preferences.textSize || '11.2' });
 
         }).catch(err => {
 
@@ -564,7 +566,7 @@ class OpenStufenbrett extends Component {
                                     {this.state.article.title}
                                 </Typography>
 
-                                <Typography paragraph variant="body1" style={{ whiteSpace: 'pre-line' }} className="paragraphText">
+                                <Typography paragraph variant="body1" style={{ whiteSpace: 'pre-line', fontSize: this.state.textSize + 'pt' }} className="paragraphText">
                                     {this.state.article.text}
                                 </Typography>
 

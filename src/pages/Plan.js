@@ -88,7 +88,11 @@ class Plan extends Component {
             if (userInfo.stufe === '11') userInfo.stufe = 'Q1';
             if (userInfo.stufe === '12') userInfo.stufe = 'Q2';
 
-            this.loadVertretungsplan(userInfo.stufe);
+            if (userInfo.stufe === 'lehrer') {
+                this.loadLehrerVertretungsplan();
+            } else {
+                this.loadVertretungsplan(userInfo.stufe);
+            }
 
         });
 
@@ -154,6 +158,95 @@ class Plan extends Component {
                             });
 
                     });
+
+            });
+
+    }
+
+
+
+    loadLehrerVertretungsplan() {
+
+        db.ref('/vertretungsplan/currentDay/abwesendeLehrer').once('value')
+            .then(snapshot => {
+
+                let abwesendeLehrer = snapshot.val();
+                this.setState({ cDayAbwesendeLehrer: abwesendeLehrer, cDayAbwesendeLehrerReady: true });
+
+            });
+
+        db.ref('/vertretungsplan/currentDay/vertretungen/').once('value')
+            .then(snapshot => {
+
+                var alleVertretungen = [];
+
+                snapshot.forEach(stufeSnaphot => {
+
+                    let stufe = stufeSnaphot.val();
+
+                    Array.prototype.push.apply(alleVertretungen, stufe);
+
+                    
+
+                });
+
+
+                db.ref('/vertretungsplan/currentDay/forDate').once('value')
+                    .then(snapshot => {
+
+                        let forDate = snapshot.val();
+
+                        db.ref('/vertretungsplan/currentDay/updatedDate').once('value')
+                            .then(snapshot => {
+
+                                let updatedDate = snapshot.val();
+                                this.setState({ cDayUpdatedDate: updatedDate, cDayForDate: forDate, cDayForDateMonthName: this.monthNumericToText(forDate.month), cDayVertretungen: alleVertretungen, cDayVertretungenReady: true });
+
+                            });
+
+                    });
+
+            });
+
+        db.ref('/vertretungsplan/nextDay/abwesendeLehrer').once('value')
+            .then(snapshot => {
+
+                let abwesendeLehrer = snapshot.val();
+                this.setState({ nDayAbwesendeLehrer: abwesendeLehrer, nDayAbwesendeLehrerReady: true });
+
+            });
+
+        db.ref('/vertretungsplan/nextDay/vertretungen/').once('value')
+            .then(snapshot => {
+
+                var alleVertretungen = [];
+
+                snapshot.forEach(stufeSnaphot => {
+
+                    let stufe = stufeSnaphot.val();
+
+                    Array.prototype.push.apply(alleVertretungen, stufe);
+
+
+
+                });
+
+
+                db.ref('/vertretungsplan/nextDay/forDate').once('value')
+                    .then(snapshot => {
+
+                        let forDate = snapshot.val();
+
+                        db.ref('/vertretungsplan/nextDay/updatedDate').once('value')
+                            .then(snapshot => {
+
+                                let updatedDate = snapshot.val();
+                                this.setState({ nDayUpdatedDate: updatedDate, nDayForDate: forDate, nDayForDateMonthName: this.monthNumericToText(forDate.month), nDayVertretungen: alleVertretungen, nDayVertretungenReady: true });
+
+                            });
+
+                    });
+
 
             });
 

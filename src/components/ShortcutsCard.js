@@ -84,17 +84,17 @@ class ShortcutsCard extends Component {
                     break;
                 case 'kalender':
                     s1name = 'Kalender';
-                    s1link = '/plan';
+                    s1link = '/kalender';
                     s1icon = <KalenderIcon />;
                     break;
                 case 'stufenbrett':
                     s1name = 'Stufenbrett';
-                    s1link = '/plan';
+                    s1link = '/stufenbrett';
                     s1icon = <StufenbrettIcon />;
                     break;
                 case 'mensa':
                     s1name = 'Mensa';
-                    s1link = '/plan';
+                    s1link = '/mensa';
                     s1icon = <MensaIcon />;
                     break;
                 case 'news':
@@ -133,17 +133,17 @@ class ShortcutsCard extends Component {
                     break;
                 case 'kalender':
                     s2name = 'Kalender';
-                    s2link = '/plan';
+                    s2link = '/kalender';
                     s2icon = <KalenderIcon />;
                     break;
                 case 'stufenbrett':
                     s2name = 'Stufenbrett';
-                    s2link = '/plan';
+                    s2link = '/stufenbrett';
                     s2icon = <StufenbrettIcon />;
                     break;
                 case 'mensa':
                     s2name = 'Mensa';
-                    s2link = '/plan';
+                    s2link = '/mensa';
                     s2icon = <MensaIcon />;
                     break;
                 case 'news':

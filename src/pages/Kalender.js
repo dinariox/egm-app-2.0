@@ -112,7 +112,7 @@ class Home extends Component {
                         {
                             date: '2',
                             title: 'Probenwochenende Theater',
-                            info: ' Theater-AG startet ihr jährliches Probenwochenende.'
+                            info: 'Theater-AG startet ihr jährliches Probenwochenende.'
                         }
                     ]
                 }

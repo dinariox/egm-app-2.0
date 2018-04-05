@@ -735,6 +735,13 @@ class Stundenplan extends Component {
     }
 
 
+    toFirstCharacterUpperCase(string) {
+        
+        return string.charAt(0).toUpperCase() + string.slice(1);
+
+    }
+
+
     render() {
 
         let { montag, dienstag, mittwoch, donnerstag, freitag } = this.state;
@@ -761,19 +768,19 @@ class Stundenplan extends Component {
                                     <Typography className="timetableItem tableHeader">Std</Typography>
                                 </Grid>
                                 <Grid item xs={2}>
-                                    <Typography className="timetableItem tableHeader">Mo</Typography>
+                                    <Typography className="timetableItem tableHeader" style={{ fontWeight: this.state.dayViewActiveDay === 'Montag' ? '600' : '' }}>Mo</Typography>
                                 </Grid>
                                 <Grid item xs={2}>
-                                    <Typography className="timetableItem tableHeader">Di</Typography>
+                                    <Typography className="timetableItem tableHeader" style={{ fontWeight: this.state.dayViewActiveDay === 'Dienstag' ? '600' : '' }}>Di</Typography>
                                 </Grid>
                                 <Grid item xs={2}>
-                                    <Typography className="timetableItem tableHeader">Mi</Typography>
+                                    <Typography className="timetableItem tableHeader" style={{ fontWeight: this.state.dayViewActiveDay === 'Mittwoch' ? '600' : '' }}>Mi</Typography>
                                 </Grid>
                                 <Grid item xs={2}>
-                                    <Typography className="timetableItem tableHeader">Do</Typography>
+                                    <Typography className="timetableItem tableHeader" style={{ fontWeight: this.state.dayViewActiveDay === 'Donnerstag' ? '600' : '' }}>Do</Typography>
                                 </Grid>
                                 <Grid item xs={2}>
-                                    <Typography className="timetableItem tableHeader">Fr</Typography>
+                                    <Typography className="timetableItem tableHeader" style={{ fontWeight: this.state.dayViewActiveDay === 'Freitag' ? '600' : '' }}>Fr</Typography>
                                 </Grid>
 
                                 <Grid item xs={12}>
@@ -793,26 +800,28 @@ class Stundenplan extends Component {
                                             return (
 
                                                 <Slide key={row.stunde} direction="up" in={this.state.stundenplanLoaded} style={{ transitionDelay: row.stunde * 80 }}>
-                                                    <Grid container spacing={8} style={{ padding: 8, paddingTop: row.stunde === 1 ? 4 : 0, paddingBottom: 4 }}>
-                                                        <Grid item xs={2}>
-                                                            <Typography className="timetableItem"><b>{row.stunde}</b><br />{row.start}<br />{row.ende}</Typography>
+                                                    <div>
+                                                        <Grid container spacing={8} style={{ padding: 8, paddingTop: row.stunde === 1 ? 4 : 0, paddingBottom: 4 }}>
+                                                            <Grid item xs={2}>
+                                                                <Typography className="timetableItem"><b>{row.stunde}</b><br />{row.start}<br />{row.ende}</Typography>
+                                                            </Grid>
+                                                            <Grid item xs={2}>
+                                                                {!montag[row.stunde] ? this.state.activeView === 'editStunden' ? <Zoom in={this.state.stundenEditModeTransition}><Button variant="raised" onClick={() => this.handleClickOpen({}, 'montag', row.stunde)} className="timetableItem" style={{ backgroundColor: 'white' }}><Typography className="tableItem" style={{ color: '#333' }}><b>&nbsp;</b><br />&nbsp;<br />&nbsp;</Typography></Button></Zoom> : null : <Button variant="raised" onClick={() => this.handleClickOpen(montag[row.stunde], 'montag', row.stunde)} className="timetableItem" style={{ backgroundColor: montag[row.stunde].farbe }}><Typography className="tableItem" style={{ color: montag[row.stunde].textfarbe }}><b>{montag[row.stunde].shortname}</b><br />{montag[row.stunde].shortlehrer || '-'}<br />{montag[row.stunde].raum[montag[row.stunde].variant] || '-'}</Typography></Button>}
+                                                            </Grid>
+                                                            <Grid item xs={2}>
+                                                                {!dienstag[row.stunde] ? this.state.activeView === 'editStunden' ? <Zoom in={this.state.stundenEditModeTransition}><Button variant="raised" onClick={() => this.handleClickOpen({}, 'dienstag', row.stunde)} className="timetableItem" style={{ backgroundColor: 'white' }}><Typography className="tableItem" style={{ color: '#333' }}><b>&nbsp;</b><br />&nbsp;<br />&nbsp;</Typography></Button></Zoom> : null : <Button variant="raised" onClick={() => this.handleClickOpen(dienstag[row.stunde], 'dienstag', row.stunde)} className="timetableItem" style={{ backgroundColor: dienstag[row.stunde].farbe }}><Typography className="tableItem" style={{ color: dienstag[row.stunde].textfarbe }}><b>{dienstag[row.stunde].shortname}</b><br />{dienstag[row.stunde].shortlehrer || '-'}<br />{dienstag[row.stunde].raum[dienstag[row.stunde].variant] || '-'}</Typography></Button>}
+                                                            </Grid>
+                                                            <Grid item xs={2}>
+                                                                {!mittwoch[row.stunde] ? this.state.activeView === 'editStunden' ? <Zoom in={this.state.stundenEditModeTransition}><Button variant="raised" onClick={() => this.handleClickOpen({}, 'mittwoch', row.stunde)} className="timetableItem" style={{ backgroundColor: 'white' }}><Typography className="tableItem" style={{ color: '#333' }}><b>&nbsp;</b><br />&nbsp;<br />&nbsp;</Typography></Button></Zoom> : null : <Button variant="raised" onClick={() => this.handleClickOpen(mittwoch[row.stunde], 'mittwoch', row.stunde)} className="timetableItem" style={{ backgroundColor: mittwoch[row.stunde].farbe }}><Typography className="tableItem" style={{ color: mittwoch[row.stunde].textfarbe }}><b>{mittwoch[row.stunde].shortname}</b><br />{mittwoch[row.stunde].shortlehrer || '-'}<br />{mittwoch[row.stunde].raum[mittwoch[row.stunde].variant] || '-'}</Typography></Button>}
+                                                            </Grid>
+                                                            <Grid item xs={2}>
+                                                                {!donnerstag[row.stunde] ? this.state.activeView === 'editStunden' ? <Zoom in={this.state.stundenEditModeTransition}><Button variant="raised" onClick={() => this.handleClickOpen({}, 'donnerstag', row.stunde)} className="timetableItem" style={{ backgroundColor: 'white' }}><Typography className="tableItem" style={{ color: '#333' }}><b>&nbsp;</b><br />&nbsp;<br />&nbsp;</Typography></Button></Zoom> : null : <Button variant="raised" onClick={() => this.handleClickOpen(donnerstag[row.stunde], 'donnerstag', row.stunde)} className="timetableItem" style={{ backgroundColor: donnerstag[row.stunde].farbe }}><Typography className="tableItem" style={{ color: donnerstag[row.stunde].textfarbe }}><b>{donnerstag[row.stunde].shortname}</b><br />{donnerstag[row.stunde].shortlehrer || '-'}<br />{donnerstag[row.stunde].raum[donnerstag[row.stunde].variant] || '-'}</Typography></Button>}
+                                                            </Grid>
+                                                            <Grid item xs={2}>
+                                                                {!freitag[row.stunde] ? this.state.activeView === 'editStunden' ? <Zoom in={this.state.stundenEditModeTransition}><Button variant="raised" onClick={() => this.handleClickOpen({}, 'freitag', row.stunde)} className="timetableItem" style={{ backgroundColor: 'white' }}><Typography className="tableItem" style={{ color: '#333' }}><b>&nbsp;</b><br />&nbsp;<br />&nbsp;</Typography></Button></Zoom> : null : <Button variant="raised" onClick={() => this.handleClickOpen(freitag[row.stunde], 'freitag', row.stunde)} className="timetableItem" style={{ backgroundColor: freitag[row.stunde].farbe }}><Typography className="tableItem" style={{ color: freitag[row.stunde].textfarbe }}><b>{freitag[row.stunde].shortname}</b><br />{freitag[row.stunde].shortlehrer || '-'}<br />{freitag[row.stunde].raum[freitag[row.stunde].variant] || '-'}</Typography></Button>}
+                                                            </Grid>
                                                         </Grid>
-                                                        <Grid item xs={2}>
-                                                            {!montag[row.stunde] ? this.state.activeView === 'editStunden' ? <Zoom in={this.state.stundenEditModeTransition}><Button variant="raised" onClick={() => this.handleClickOpen({}, 'montag', row.stunde)} className="timetableItem" style={{ backgroundColor: 'white' }}><Typography className="tableItem" style={{ color: '#333' }}><b>&nbsp;</b><br />&nbsp;<br />&nbsp;</Typography></Button></Zoom> : null : <Button variant="raised" onClick={() => this.handleClickOpen(montag[row.stunde], 'montag', row.stunde)} className="timetableItem" style={{ backgroundColor: montag[row.stunde].farbe }}><Typography className="tableItem" style={{ color: montag[row.stunde].textfarbe }}><b>{montag[row.stunde].shortname}</b><br />{montag[row.stunde].shortlehrer || '-'}<br />{montag[row.stunde].raum[montag[row.stunde].variant] || '-'}</Typography></Button>}
-                                                        </Grid>
-                                                        <Grid item xs={2}>
-                                                            {!dienstag[row.stunde] ? this.state.activeView === 'editStunden' ? <Zoom in={this.state.stundenEditModeTransition}><Button variant="raised" onClick={() => this.handleClickOpen({}, 'dienstag', row.stunde)} className="timetableItem" style={{ backgroundColor: 'white' }}><Typography className="tableItem" style={{ color: '#333' }}><b>&nbsp;</b><br />&nbsp;<br />&nbsp;</Typography></Button></Zoom> : null : <Button variant="raised" onClick={() => this.handleClickOpen(dienstag[row.stunde], 'dienstag', row.stunde)} className="timetableItem" style={{ backgroundColor: dienstag[row.stunde].farbe }}><Typography className="tableItem" style={{ color: dienstag[row.stunde].textfarbe }}><b>{dienstag[row.stunde].shortname}</b><br />{dienstag[row.stunde].shortlehrer || '-'}<br />{dienstag[row.stunde].raum[dienstag[row.stunde].variant] || '-'}</Typography></Button>}
-                                                        </Grid>
-                                                        <Grid item xs={2}>
-                                                            {!mittwoch[row.stunde] ? this.state.activeView === 'editStunden' ? <Zoom in={this.state.stundenEditModeTransition}><Button variant="raised" onClick={() => this.handleClickOpen({}, 'mittwoch', row.stunde)} className="timetableItem" style={{ backgroundColor: 'white' }}><Typography className="tableItem" style={{ color: '#333' }}><b>&nbsp;</b><br />&nbsp;<br />&nbsp;</Typography></Button></Zoom> : null : <Button variant="raised" onClick={() => this.handleClickOpen(mittwoch[row.stunde], 'mittwoch', row.stunde)} className="timetableItem" style={{ backgroundColor: mittwoch[row.stunde].farbe }}><Typography className="tableItem" style={{ color: mittwoch[row.stunde].textfarbe }}><b>{mittwoch[row.stunde].shortname}</b><br />{mittwoch[row.stunde].shortlehrer || '-'}<br />{mittwoch[row.stunde].raum[mittwoch[row.stunde].variant] || '-'}</Typography></Button>}
-                                                        </Grid>
-                                                        <Grid item xs={2}>
-                                                            {!donnerstag[row.stunde] ? this.state.activeView === 'editStunden' ? <Zoom in={this.state.stundenEditModeTransition}><Button variant="raised" onClick={() => this.handleClickOpen({}, 'donnerstag', row.stunde)} className="timetableItem" style={{ backgroundColor: 'white' }}><Typography className="tableItem" style={{ color: '#333' }}><b>&nbsp;</b><br />&nbsp;<br />&nbsp;</Typography></Button></Zoom> : null : <Button variant="raised" onClick={() => this.handleClickOpen(donnerstag[row.stunde], 'donnerstag', row.stunde)} className="timetableItem" style={{ backgroundColor: donnerstag[row.stunde].farbe }}><Typography className="tableItem" style={{ color: donnerstag[row.stunde].textfarbe }}><b>{donnerstag[row.stunde].shortname}</b><br />{donnerstag[row.stunde].shortlehrer || '-'}<br />{donnerstag[row.stunde].raum[donnerstag[row.stunde].variant] || '-'}</Typography></Button>}
-                                                        </Grid>
-                                                        <Grid item xs={2}>
-                                                            {!freitag[row.stunde] ? this.state.activeView === 'editStunden' ? <Zoom in={this.state.stundenEditModeTransition}><Button variant="raised" onClick={() => this.handleClickOpen({}, 'freitag', row.stunde)} className="timetableItem" style={{ backgroundColor: 'white' }}><Typography className="tableItem" style={{ color: '#333' }}><b>&nbsp;</b><br />&nbsp;<br />&nbsp;</Typography></Button></Zoom> : null : <Button variant="raised" onClick={() => this.handleClickOpen(freitag[row.stunde], 'freitag', row.stunde)} className="timetableItem" style={{ backgroundColor: freitag[row.stunde].farbe }}><Typography className="tableItem" style={{ color: freitag[row.stunde].textfarbe }}><b>{freitag[row.stunde].shortname}</b><br />{freitag[row.stunde].shortlehrer || '-'}<br />{freitag[row.stunde].raum[freitag[row.stunde].variant] || '-'}</Typography></Button>}
-                                                        </Grid>
-                                                    </Grid>
+                                                    </div>
                                                 </Slide>
 
                                             );
@@ -1328,7 +1337,7 @@ class Stundenplan extends Component {
                         onClose={() => this.cancleEditingStunde()}
                         aria-labelledby="form-dialog-title"
                     >
-                        <DialogTitle id="form-dialog-title">{this.state.editStundeTag}, {this.state.editStundeStunde}. Stunde bearbeiten</DialogTitle>
+                        <DialogTitle id="form-dialog-title">{this.toFirstCharacterUpperCase(this.state.editStundeTag)}, {this.state.editStundeStunde}. Stunde bearbeiten</DialogTitle>
                         <DialogContent>
 
                             <FormControl>

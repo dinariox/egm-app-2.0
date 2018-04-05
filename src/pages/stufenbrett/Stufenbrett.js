@@ -51,7 +51,9 @@ class News extends Component {
 
             let data = snapshot.val();
             let userInfo = data[Object.keys(data)[0]]
-            this.setState({ userStufe: userInfo.stufe });
+            this.setState({ userStufe: userInfo.stufe, userIsAdmin: userInfo.admin ? true : false });
+
+            console.log(this.state.userStufe, this.state.userIsAdmin);
 
         }).catch(err => {
 
@@ -74,7 +76,7 @@ class News extends Component {
                     <EGMAppBar ref="appBar" title={this.state.pageTitle} />
                     <div className="appBarSpacer"></div>
 
-                    { this.state.userIsAdmin ?
+                    { this.state.userIsAdmin || this.state.userStufe === 'lehrer' ?
 
 
                         <Fragment>
@@ -92,12 +94,12 @@ class News extends Component {
 
                         <Fragment>
 
-                            {this.state.userStufe === '7' || this.state.userStufe === 'lehrer' && <StufenbrettCard stufe="7" heading={this.state.cardHeading} loadColor="#4CAF50" />}
-                            {this.state.userStufe === '8' || this.state.userStufe === 'lehrer' && <StufenbrettCard stufe="8" heading={this.state.cardHeading} loadColor="#4CAF50" />}
-                            {this.state.userStufe === '9' || this.state.userStufe === 'lehrer' && <StufenbrettCard stufe="9" heading={this.state.cardHeading} loadColor="#4CAF50" />}
-                            {this.state.userStufe === '10' || this.state.userStufe === 'lehrer' && <StufenbrettCard stufe="10" heading={this.state.cardHeading} loadColor="#4CAF50" />}
-                            {this.state.userStufe === '11' || this.state.userStufe === 'lehrer' && <StufenbrettCard stufe="11" heading={this.state.cardHeading} loadColor="#4CAF50" />}
-                            {this.state.userStufe === '12' || this.state.userStufe === 'lehrer' && <StufenbrettCard stufe="12" heading={this.state.cardHeading} loadColor="#4CAF50" />}
+                            {this.state.userStufe === '7' && <StufenbrettCard stufe="7" heading={this.state.cardHeading} loadColor="#4CAF50" />}
+                            {this.state.userStufe === '8' && <StufenbrettCard stufe="8" heading={this.state.cardHeading} loadColor="#4CAF50" />}
+                            {this.state.userStufe === '9' && <StufenbrettCard stufe="9" heading={this.state.cardHeading} loadColor="#4CAF50" />}
+                            {this.state.userStufe === '10' && <StufenbrettCard stufe="10" heading={this.state.cardHeading} loadColor="#4CAF50" />}
+                            {this.state.userStufe === '11' && <StufenbrettCard stufe="11" heading={this.state.cardHeading} loadColor="#4CAF50" />}
+                            {this.state.userStufe === '12' && <StufenbrettCard stufe="12" heading={this.state.cardHeading} loadColor="#4CAF50" />}
 
                         </Fragment>
                     

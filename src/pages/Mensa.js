@@ -154,7 +154,7 @@ class Mensa extends Component {
                                     <Typography component="p">
                                         Hier kannst du den aktuellen Mensaplan einsehen
                                     </Typography>
-                                    <img onLoad={() => this.setState({ mensaplanLoaded: true })} src={this.state.mensaplanURL} style={{ width: '100%', padding: 16 }} />
+                                    <Button href={this.state.mensaplanURL} target="_blank"><img onLoad={() => this.setState({ mensaplanLoaded: true })} src={this.state.mensaplanURL} style={{ width: '100%', padding: 16 }} /></Button>
                                     <CircularProgress style={{ display: this.state.mensaplanLoaded ? 'none' : '', position: 'relative', left: '50%', transform: 'translateX(-50%)' }} />
                                 </CardContent>
                             </Card>           

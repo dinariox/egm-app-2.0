@@ -69,7 +69,8 @@ class App extends Component {
                         email: user.email,
                         firstname: this.state.firstname,
                         lastname: this.state.lastname,
-                        stufe: this.state.userWillBeStufe || ''
+                        stufe: this.state.userWillBeStufe || '',
+                        preferences: { defaultStundenplanDayView: false, shortcut1: 'vertretungsplan', shortcut2: 'stundenplan', textSize: 11.2 }
                     }).then(() => {
                       
                         this.setState({

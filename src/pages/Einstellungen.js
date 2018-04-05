@@ -34,6 +34,7 @@ import AccessibilityIcon from 'material-ui-icons/Accessibility';
 import PhotoIcon from 'material-ui-icons/PhotoCamera';
 import TodayIcon from 'material-ui-icons/Today';
 import FavoriteIcon from 'material-ui-icons/Favorite';
+import FormatSizeIcon from 'material-ui-icons/FormatSize';
 
 
 // Own components
@@ -60,6 +61,14 @@ const shortcutOptions = [
     { label: 'Archiv: Schulleitung', value: 'schulleitung' }
 ];
 
+const textSizeOptions = [
+    { label: 'Sehr klein', value: '9.5' },
+    { label: 'Klein', value: '10.6' },
+    { label: 'Normal', value: '11.2' },
+    { label: 'Größer', value: '11.8' },
+    { label: 'Groß', value: '13' },
+    { label: 'Sehr groß', value: '14' }
+];
 
 
 class Einstellungen extends Component {
@@ -90,7 +99,10 @@ class Einstellungen extends Component {
             showShortcutDialog2: false,
 
             shortcut1: '',
-            shortcut2: ''
+            shortcut2: '',
+
+            textSize: '',
+            showTextSizeDialog: false
         };
 
     }
@@ -121,10 +133,6 @@ class Einstellungen extends Component {
                     shortcut2: 'stundenplan'
                 });
 
-                return this.setState({
-                    settingsLoaded: true, shortcut1: 'vertretungsplan', shortcut2: 'stundenplan'
-                });
-
             }
 
             if (preferences.defaultStundenplanDayView === undefined) {
@@ -135,13 +143,21 @@ class Einstellungen extends Component {
                     defaultStundenplanDayView: false
                 });
 
-                return this.setState({ settingsLoaded: true, shortcut1: 'vertretungsplan', shortcut2: 'stundenplan' });
-
             }   
+
+            if (preferences.textSize === undefined) {
+
+                let refToSettings = '/users/' + snapshot.ref.path.pieces_[1] + '/preferences'
+
+                db.ref(refToSettings).update({
+                    textSize: '11.2'
+                });
+
+            }
 
             let defaultStundenplanDayView = preferences.defaultStundenplanDayView;
 
-            this.setState({ checkedSettings: defaultStundenplanDayView ? ['defaultToDayView'] : [], shortcut1: preferences.shortcut1, shortcut2: preferences.shortcut2, settingsLoaded: true });
+            this.setState({ checkedSettings: defaultStundenplanDayView ? ['defaultToDayView'] : [], shortcut1: preferences.shortcut1 || 'vertretungsplan', shortcut2: preferences.shortcut2 || 'stundenplan', settingsLoaded: true, textSize: preferences.textSize || '11.2' });
 
         });
 
@@ -195,6 +211,23 @@ class Einstellungen extends Component {
 
             db.ref(refToSettings).update({
                 [shortcut]: value
+            });
+
+        });
+
+    }
+
+
+    changeTextSize(value) {
+
+        this.setState({ textSize: value, showTextSizeDialog: false });
+
+        db.ref("/users/").orderByChild("uid").equalTo(auth.currentUser.uid).once("child_added", snapshot => {
+
+            let refToSettings = '/users/' + snapshot.ref.path.pieces_[1] + '/preferences/'
+
+            db.ref(refToSettings).update({
+                textSize: value
             });
 
         });
@@ -421,6 +454,23 @@ class Einstellungen extends Component {
     }
 
 
+    textSizeValueToDisplayName(value) {
+
+        const names = {
+            '9.5': 'Sehr klein',
+            '10.6': 'Klein',
+            '11.2': 'Normal',
+            '11.8': 'Größer',
+            '13': 'Groß',
+            '14': 'Sehr groß',
+        }
+
+        return names[value] || 'Lädt...';
+
+    }
+
+
+
     render() {
         return (
 
@@ -456,6 +506,17 @@ class Einstellungen extends Component {
                                 }
                             </ListItemIcon>
                             <ListItemText primary="Shortcut 2 ändern" secondary={this.shortcutValueToDisplayName(this.state.shortcut2)} />
+                        </ListItem>
+
+                        <ListItem button onClick={() => this.handleClickOpen('showTextSizeDialog')} disabled={!this.state.textSize}>
+                            <ListItemIcon>
+                                {this.state.textSize ?
+                                    <FormatSizeIcon />
+                                    :
+                                    <CircularProgress size={24} />
+                                }
+                            </ListItemIcon>
+                            <ListItemText primary="Textgröße in Artikeln ändern" secondary={this.textSizeValueToDisplayName(this.state.textSize)} />
                         </ListItem>
 
                     </List>
@@ -662,6 +723,14 @@ class Einstellungen extends Component {
                 /> }
 
 
+                {/* CHANGE TEXT SIZE */}
+                {this.state.textSize && <ChangeTextSizeDialog
+                    open={this.state.showTextSizeDialog}
+                    onClose={value => this.changeTextSize(value)}
+                    value={this.state.textSize}
+                />}
+
+
             </MuiThemeProvider>
 
 
@@ -740,7 +809,7 @@ class ChangeShortcutDialog extends Component {
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={this.handleCancel} color="primary">
-                        Cancel
+                        Abbrechen
                     </Button>
                     <Button onClick={this.handleOk} color="primary">
                         Ok
@@ -754,6 +823,88 @@ class ChangeShortcutDialog extends Component {
 
 }
 
+
+class ChangeTextSizeDialog extends Component {
+
+    constructor(props, context) {
+        super(props, context);
+
+        this.state.value = this.props.value;
+    }
+
+
+    state = {};
+
+
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.value !== this.props.value) {
+            this.setState({ value: nextProps.value });
+        }
+    }
+
+    radioGroup = null;
+
+    handleEntering = () => {
+        this.radioGroup.focus();
+    };
+
+    handleCancel = () => {
+        this.props.onClose(this.props.value);
+    };
+
+    handleOk = () => {
+        this.props.onClose(this.state.value);
+    };
+
+    handleChange = (event, value) => {
+        this.setState({ value });
+    };
+
+    render() {
+
+        const { value, ...other } = this.props;
+
+        return (
+
+            <Dialog
+                disableBackdropClick
+                disableEscapeKeyDown
+                maxWidth="xs"
+                onEntering={this.handleEntering}
+                aria-labelledby="confirmation-dialog-title"
+                {...other}
+            >
+                <DialogTitle id="confirmation-dialog-title">Textgröße auswählen</DialogTitle>
+                <DialogContent>
+                    <RadioGroup
+                        ref={node => {
+                            this.radioGroup = node;
+                        }}
+                        aria-label="shortcut"
+                        name="shortcut"
+                        value={this.state.value}
+                        onChange={this.handleChange}
+                    >
+                        {textSizeOptions.map(option => (
+                            <FormControlLabel value={option.value} key={option.value} control={<Radio color="primary" />} label={option.label} />
+                        ))}
+                    </RadioGroup>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={this.handleCancel} color="primary">
+                        Abbrechen
+                    </Button>
+                    <Button onClick={this.handleOk} color="primary">
+                        Ok
+                    </Button>
+                </DialogActions>
+            </Dialog >
+
+        );
+
+    }
+
+}
 
 
 export default Einstellungen;

@@ -142,7 +142,9 @@ class OpenArticle extends Component {
 
             showUploadProgress: false,
             uploadStatus: '',
-            uploadProgress: 0
+            uploadProgress: 0,
+
+            textSize: '11.2'
 
         };
 
@@ -159,7 +161,7 @@ class OpenArticle extends Component {
 
             let data = snapshot.val();
             let userInfo = data[Object.keys(data)[0]]
-            this.setState({ userIsAdmin: userInfo.admin ? true : false });
+            this.setState({ userIsAdmin: userInfo.admin ? true : false, textSize: userInfo.preferences.textSize || '11.2' });
 
         }).catch(err => {
 
@@ -585,7 +587,7 @@ class OpenArticle extends Component {
                                     {this.state.article.title}
                                 </Typography>
 
-                                <Typography paragraph variant="body1" style={{ whiteSpace: 'pre-line' }} className="paragraphText">
+                                <Typography paragraph variant="body1" style={{ whiteSpace: 'pre-line', fontSize: this.state.textSize + 'pt' }} className="paragraphText">
                                     {this.state.article.text}
                                 </Typography>
 
