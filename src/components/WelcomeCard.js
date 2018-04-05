@@ -25,7 +25,9 @@ class WelcomeCard extends Component {
             welcomeMessages: [],
             animation: '',
             loadingCircle: '',
-            font: 'Indie Flower'
+            font: 'Indie Flower',
+            timeoutWelcome: null,
+            intervalWelcome: null
 
         };
 
@@ -70,23 +72,23 @@ class WelcomeCard extends Component {
 
 
 
-                timeoutWelcome = setTimeout(function () {
+                this.setState({ timeoutWelcome: setTimeout(() => {
 
                     this.setState({
                         animation: 'fade-out 0.5s forwards'
                     });
 
-                }.bind(this), 9500);
+                }, 9500)});
 
-                intervalWelcome = setInterval(function () {
+                this.setState({ intervalWelcome: setInterval(() => {
 
-                    setTimeout(function () {
+                    setTimeout(() => {
 
                         this.setState({
                             animation: 'fade-out 0.5s forwards'
                         });
 
-                    }.bind(this), 9500);
+                    }, 9500);
 
                     let randomNumber = Math.floor(Math.random() * amountOfMessages);
                     let randomMessage = sortedMessages[randomNumber];
@@ -102,7 +104,7 @@ class WelcomeCard extends Component {
                         font: randomMessage.sprache === 'Russisch' ? 'Neucha' : 'Indie Flower'
                     });
 
-                }.bind(this), 10000);
+                }, 10000)});
 
 
 
@@ -124,8 +126,8 @@ class WelcomeCard extends Component {
 
     componentWillUnmount () {
 
-        clearInterval(intervalWelcome);
-        clearTimeout(timeoutWelcome);
+        clearInterval(this.state.intervalWelcome);
+        clearTimeout(this.state.timeoutWelcome);
 
     }
 

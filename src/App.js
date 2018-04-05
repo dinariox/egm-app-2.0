@@ -19,9 +19,11 @@ import Mensa from "./pages/Mensa";
 import Einstellungen from "./pages/Einstellungen";
 import CreateArticle from "./pages/archiv/CreateArticle";
 import CreateStufenbrettEintrag from "./pages/stufenbrett/CreateStufenbrettEintrag";
+import Impressum from "./pages/Impressum";
 
 import { CircularProgress } from 'material-ui/Progress';
 import firebase from './firebase';
+
 
 
 const messaging = firebase.messaging();
@@ -184,6 +186,7 @@ class App extends Component {
                         <Route path="/mensa" component={Mensa} />
                         <Route path="/einstellungen" exact component={Einstellungen} />
                         <Route path="/einstellungen/:highlight" component={Einstellungen} />
+                        <Route path="/impressum" component={Impressum} />
 
                     </div>
 

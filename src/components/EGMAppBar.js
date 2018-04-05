@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 
 import './EGMAppBar.css';
+import sideList from './../NavigationItems';
 
 import SwipeableDrawer from 'material-ui/SwipeableDrawer';
 import Divider from 'material-ui/Divider';
@@ -418,78 +419,6 @@ class MenuDrawerLeft extends Component {
 
   render() {
 
-
-
-    const sideList = (
-
-        <div className="list">
-
-            <ProfileDisplay />
-
-            <List>
-                <ListItem button component={Link} to="/">
-                    <ListItemIcon>
-                        <StartIcon />
-                    </ListItemIcon>
-                    <ListItemText primary="Start" />
-                </ListItem>
-                <ListItem button component={Link} to="/plan">
-                    <ListItemIcon>
-                        <PlanIcon />
-                    </ListItemIcon>
-                    <ListItemText primary="Vertretungsplan" />
-                </ListItem>
-                <ListItem button component={Link} to="/stundenplan">
-                    <ListItemIcon>
-                        <StundenplanIcon />
-                    </ListItemIcon>
-                    <ListItemText primary="Stundenplan" />
-                </ListItem>
-                <ListItem button component={Link} to="/kalender">
-                    <ListItemIcon>
-                        <KalenderIcon />
-                    </ListItemIcon>
-                    <ListItemText primary="Kalender" />
-                </ListItem>
-                <ListItem button component={Link} to="/stufenbrett">
-                    <ListItemIcon>
-                        <StufenbrettIcon />
-                    </ListItemIcon>
-                    <ListItemText primary="Stufenbrett" />
-                </ListItem>
-                <ListItem button component={Link} to="/sharens">
-                    <ListItemIcon>
-                        <SharensIcon />
-                    </ListItemIcon>
-                    <ListItemText primary="Sharens" />
-                </ListItem>
-                <ListItem button component={Link} to="/mensa">
-                    <ListItemIcon>
-                        <MensaIcon />
-                    </ListItemIcon>
-                    <ListItemText primary="Mensa" />
-                </ListItem>
-                <ListItem button component={Link} to="/archiv/news">
-                    <ListItemIcon>
-                        <ArchivIcon />
-                    </ListItemIcon>
-                    <ListItemText primary="Archiv" />
-                </ListItem>
-            </List>
-            <Divider />
-            <List>
-                <ListItem button>
-                    <ListItemText primary="Team" />
-                </ListItem>
-                <ListItem button>
-                    <ListItemText primary="Impressum" />
-                </ListItem>
-            </List>
-
-        </div>
-
-    );
-
     return (
         <div>
             <IconButton className="menuButton" color="secondary" aria-label="Menu"  onClick={this.toggleDrawer('left', true)}>
@@ -500,7 +429,15 @@ class MenuDrawerLeft extends Component {
 
                 <div tabIndex={0} role="button" onClick={this.toggleDrawer('left', false)} onKeyDown={this.toggleDrawer('left', false)}>
 
-                    {sideList}
+                    
+
+                    <div className="list">
+
+                        <ProfileDisplay />
+
+                        {sideList}
+
+                    </div>
 
                 </div>
 

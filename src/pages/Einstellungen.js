@@ -81,6 +81,7 @@ class Einstellungen extends Component {
             checkedSettings: [],
             swAdminDialog: false,
             swStufeDialog: false,
+            chProfilePictureDialog: false,
 
             newStufe: '',
             newStufenpasswort: '',
@@ -494,7 +495,7 @@ class Einstellungen extends Component {
                                     <CircularProgress size={24} />
                                 }
                             </ListItemIcon>
-                            <ListItemText primary="Shortcut 1 ändern" secondary={this.shortcutValueToDisplayName(this.state.shortcut1)} />
+                            <ListItemText primary="Favorit 1 auswählen" secondary={this.shortcutValueToDisplayName(this.state.shortcut1)} />
                         </ListItem>
 
                         <ListItem button onClick={() => this.handleClickOpen('showShortcutDialog2')} disabled={!this.state.shortcut2}>
@@ -505,7 +506,7 @@ class Einstellungen extends Component {
                                     <CircularProgress size={24} />
                                 }
                             </ListItemIcon>
-                            <ListItemText primary="Shortcut 2 ändern" secondary={this.shortcutValueToDisplayName(this.state.shortcut2)} />
+                            <ListItemText primary="Favorit 2 auswählen" secondary={this.shortcutValueToDisplayName(this.state.shortcut2)} />
                         </ListItem>
 
                         <ListItem button onClick={() => this.handleClickOpen('showTextSizeDialog')} disabled={!this.state.textSize}>
