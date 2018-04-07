@@ -1,5 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import 'typeface-roboto';
+import Lightbox from 'react-images';
 
 import './../../main.css';
 import './OpenArticle.css';
@@ -29,6 +30,7 @@ import Dialog, {
     DialogContentText,
     DialogTitle,
 } from 'material-ui/Dialog';
+import Collapse from 'material-ui/transitions/Collapse';
 
 import MoreImagesIcon from 'material-ui-icons/Collections';
 import FileDownloadIcon from 'material-ui-icons/FileDownload';
@@ -121,7 +123,9 @@ class OpenArticle extends Component {
                 date: '',
                 icon: '',
                 iconColor: '',
-                image: ''
+                image: '',
+                attachments: null,
+                moreImages: null
             },
             loadingBarOpacity: 1,
             fabOpacity: 0,
@@ -144,7 +148,10 @@ class OpenArticle extends Component {
             uploadStatus: '',
             uploadProgress: 0,
 
-            textSize: '11.2'
+            textSize: '11.2',
+
+            showLightbox: false,
+            currentImage: 0
 
         };
 
@@ -210,7 +217,8 @@ class OpenArticle extends Component {
                     icon: article.icon || '',
                     iconColor: article.iconColor || '',
                     image: article.image || '',
-                    attachments: article.anhänge || null
+                    attachments: article.anhänge || null,
+                    moreImages: article.moreImages || null
                 }
 
             });
@@ -265,18 +273,29 @@ class OpenArticle extends Component {
 
         let today = new Date();
         let dd = today.getDate();
-        let mm = today.getMonth() + 1; // January is 0!
+        let mm = today.getMonth(); // January is 0!
         let yyyy = today.getFullYear();
 
         if (dd < 10) {
             dd = '0' + dd;
         }
 
-        if (mm < 10) {
-            mm = '0' + mm;
-        }
+        const monthNames = [
+            'Januar',
+            'Februar',
+            'März',
+            'April',
+            'Mai',
+            'Juni',
+            'Juli',
+            'August',
+            'September',
+            'Oktober',
+            'November',
+            'Dezember'
+        ]
 
-        today = dd + '.' + mm + '.' + yyyy;
+        today = dd + '. ' + monthNames[mm] + ' ' + yyyy;
 
         this.setState({ editDate: today });
 
@@ -552,6 +571,19 @@ class OpenArticle extends Component {
     }
 
 
+    showMoreImages() {
+
+        let moreImages = this.state.article.moreImages, moreImagesObjList = [];
+
+        moreImages.forEach(image => {
+            moreImagesObjList.push({ src: image });
+        });
+
+        this.setState({ moreImages: moreImagesObjList, showLightbox: true });
+
+    }
+
+
     render() {
 
         return (
@@ -570,9 +602,9 @@ class OpenArticle extends Component {
                         <div>
                             <Paper className="articleShowImagePlaceholder" style={{ height: imageH, transition: 'height 300ms' }}>
                                 <img className="articleShowImage" alt="" style={{ height: imageH, transition: 'height 300ms' }} src={this.state.article.image} onLoad={() => { this.setState({ loadingBarOpacity: 0, fabOpacity: 1 }) }} />
-                                <Button variant="fab" aria-label="Bilder anzeigen" className="articleFAB" style={{ opacity: this.state.fabOpacity, transition: 'opacity 300ms' }}>
+                                { this.state.article.moreImages && <Button onClick={() => this.showMoreImages()} variant="fab" aria-label="Bilder anzeigen" className="articleFAB" style={{ opacity: this.state.fabOpacity, transition: 'opacity 300ms', zIndex: 999 }}>
                                     <MoreImagesIcon />
-                                </Button>
+                                </Button> }
                             </Paper>
 
                             <LinearProgress className="imageLoadingBar" style={{ opacity: this.state.loadingBarOpacity }} />
@@ -618,6 +650,21 @@ class OpenArticle extends Component {
                                 }
 
                             </div>
+
+                            { this.state.moreImages &&
+
+                                <Lightbox images={this.state.moreImages}
+                                    onClose={() => this.setState({ showLightbox: false, currentImage: 0 })}
+                                    onClickPrev={() => this.setState({ currentImage: this.state.currentImage - 1 })}
+                                    onClickNext={() => this.setState({ currentImage: this.state.currentImage + 1 })}
+                                    currentImage={this.state.currentImage}
+                                    isOpen={this.state.showLightbox}
+                                    backdropClosesModal={true}
+                                    imageCountSeparator=" von "
+                                />
+
+                            }
+
                         </div>
 
                     }

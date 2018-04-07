@@ -72,7 +72,7 @@ const sideList =  (
         </List>
         <Divider />
         <List>
-            <ListItem button>
+            <ListItem button component={Link} to="/team">
                 <ListItemText primary="Team" />
             </ListItem>
             <ListItem button component={Link} to="/impressum">

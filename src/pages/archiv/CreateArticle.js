@@ -158,18 +158,29 @@ class CreateArticle extends Component {
 
         let today = new Date();
         let dd = today.getDate();
-        let mm = today.getMonth() + 1; // January is 0!
+        let mm = today.getMonth(); // January is 0!
         let yyyy = today.getFullYear();
 
         if (dd < 10) {
             dd = '0' + dd;
         }
 
-        if (mm < 10) {
-            mm = '0' + mm;
-        }
+        const monthNames = [
+            'Januar',
+            'Februar',
+            'März',
+            'April',
+            'Mai',
+            'Juni',
+            'Juli',
+            'August',
+            'September',
+            'Oktober',
+            'November',
+            'Dezember'
+        ]
 
-        today = dd + '.' + mm + '.' + yyyy;
+        today = dd + '. ' + monthNames[mm] + ' ' + yyyy;
 
         this.setState({ editDate: today });
 
