@@ -21,6 +21,7 @@ import CreateArticle from "./pages/archiv/CreateArticle";
 import CreateStufenbrettEintrag from "./pages/stufenbrett/CreateStufenbrettEintrag";
 import Impressum from "./pages/Impressum";
 import Team from "./pages/Team";
+import Support from "./pages/Support";
 
 import { CircularProgress } from 'material-ui/Progress';
 import firebase from './firebase';
@@ -189,6 +190,7 @@ class App extends Component {
                         <Route path="/einstellungen/:highlight" component={Einstellungen} />
                         <Route path="/impressum" component={Impressum} />
                         <Route path="/team" component={Team} />
+                        <Route path="/support" component={Support} />
 
                     </div>
 

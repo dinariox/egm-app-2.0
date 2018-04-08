@@ -118,7 +118,7 @@ class Stundenplan extends Component {
         this.state = {
             pageTitle: 'Stundenplan',
 
-            activeView: 'week',
+            activeView: '',
             stundenEditMode: false,
             stundenEditModeTransition: false,
             dayViewActiveDay: '',
@@ -182,21 +182,22 @@ class Stundenplan extends Component {
 
     componentDidMount() {
 
-        this.loadStundenplan();
-
         let dayList = [
+            'Montag',
             'Montag',
             'Dienstag',
             'Mittwoch',
             'Donnerstag',
             'Freitag',
-            'Montag',
             'Montag'
         ];
 
-        let currentDay = dayList[new Date().getDay() - 1];
+        let currentDay = dayList[new Date().getDay()];
 
         this.setState({ dayViewActiveDay: currentDay });
+
+
+        this.loadStundenplan();
 
 
         db.ref("/users/").orderByChild("uid").equalTo(auth.currentUser.uid).once("value", snapshot => {
@@ -204,6 +205,7 @@ class Stundenplan extends Component {
             let data = snapshot.val();
 
             let preferences = data[Object.keys(data)[0]].preferences;
+            let defaultStundenplanDayView;
 
             if (!preferences) {
 
@@ -211,13 +213,34 @@ class Stundenplan extends Component {
 
                 db.ref(refToSettings).set(false);
 
-                return this.setState({ checkedStartWithDayView: false });
+                if (data[Object.keys(data)[0]].stundenplan) {
+
+                    this.setState({ activeView: 'week', checkedStartWithDayView: false });
+
+                } else {
+
+                    this.setState({ activeView: 'setup', checkedStartWithDayView: false });
+
+                }
+
+            } else {
+
+                defaultStundenplanDayView = preferences.defaultStundenplanDayView;
+                
+                if (data[Object.keys(data)[0]].stundenplan) {
+
+                    this.setState({ activeView: defaultStundenplanDayView ? 'day' : 'week', checkedStartWithDayView: defaultStundenplanDayView });
+
+                } else {
+
+                    this.setState({ activeView: 'setup', checkedStartWithDayView: defaultStundenplanDayView });
+
+                }
 
             }
 
-            let defaultStundenplanDayView = preferences.defaultStundenplanDayView;
 
-            this.setState({ activeView: defaultStundenplanDayView ? 'day' : 'week', checkedStartWithDayView: defaultStundenplanDayView });
+            
 
         }).then(() => {
           
@@ -245,7 +268,6 @@ class Stundenplan extends Component {
             let stundenplanInfo = data[Object.keys(data)[0]].stundenplan;
 
             if (!stundenplanInfo) {
-
 
                 this.setState({ activeView: 'setup' });
 

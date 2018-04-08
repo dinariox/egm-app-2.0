@@ -157,7 +157,12 @@ class Home extends Component {
 
                     <div className="appBarSpacer"></div>
 
-                    {this.state.calenderEvents.map((monthObj, index1) => (
+                    <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translateX(-50%) translateY(-50%)', textAlign: 'center', width: 300 }}>
+                        <Typography variant="display2" paragraph style={{ fontWeight: 300 }}>In Arbeit</Typography>
+                        <Typography variant="headline" style={{ fontWeight: 300 }}>Der Kalender braucht noch etwas Arbeit und steht bald zu Verfügung</Typography>
+                    </div>
+
+                    {/* {this.state.calenderEvents.map((monthObj, index1) => (
                         <div key={`section-${index1}`} className="calenderListItem">
 
                             <Typography variant="subheading" style={{ textAlign: 'center', marginTop: 12 }}>{monthObj.month}</Typography>
@@ -199,7 +204,7 @@ class Home extends Component {
                             </ListItemIcon>
                             <ListItemText style={{ marginLeft: -16 }} inset primary="Markieren" />
                         </MenuItem>
-                    </Menu>
+                    </Menu> */}
 
                 </div>
 

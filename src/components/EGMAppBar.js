@@ -320,7 +320,7 @@ class ProfileDisplay extends Component {
                             <Typography variant="title" style={{color: '#fff'}}>EGM App</Typography>
                             <div className="iconButtonsWrapper">
                                 <IconButton color="secondary" component={Link} to="/einstellungen"><SettingsIcon /></IconButton>
-                                <IconButton color="secondary"><HelpIcon /></IconButton>
+                                <IconButton color="secondary" component={Link} to="/support"><HelpIcon /></IconButton>
                             </div>
                         </div>
                         <div className="userInfoWrapper">
